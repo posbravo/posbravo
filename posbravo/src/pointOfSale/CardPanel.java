@@ -24,7 +24,7 @@ public class CardPanel extends JPanel implements ActionListener {
 	private static final Color DARK_CHAMPAGNE = new Color(194, 178, 128);
 	private static final String RECEIPT_PATH = "Files/Receipts";
 	private static final String RECEIPT_LIST = RECEIPT_PATH + "/ReceiptList";
-	private static final String[] tabText = {"", "Tip: ", "Card Number: ", "Experation Date (MMYY): "};
+	private static final String[] tabText = {"", "Tip: ", "Card Number: ", "Expiration Date (MMYY): "};
 	
 	private static JPanel tabPanel = new JPanel(new GridLayout(1,3));
 	private static JTextField display = new JTextField("", 20);
@@ -41,10 +41,12 @@ public class CardPanel extends JPanel implements ActionListener {
 	private static String swipe = "";
 	private static KeyBarsListener listen = null;
 	
+	private static boolean reset = false;
+	private static boolean luhnErr = false;
+	
 	public CardPanel(boolean isAdmin__)
 	{
 		isAdmin = isAdmin__;
-		int i;
 		tabPanel.removeAll();
 		display.removeAll();
 		display.removeKeyListener(listen);
@@ -205,6 +207,7 @@ public class CardPanel extends JPanel implements ActionListener {
 		System.out.println(num + " and " + exp);
 		if(num.matches("\\d{10,17}") && exp.matches("\\d{4}"))
 		{
+			
 			return true;
 		}
 		return false;
@@ -214,8 +217,15 @@ public class CardPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		int command = Integer.parseInt(event.getActionCommand());
 		
+		if(reset){
+			current = tabStrings[selection];
+			reset = false;
+			tabText[selection] = "Expiration Date (MMYY): ";
+		}
+		
 		if (command < 10)
 		{
+		
 			current += command;
 		} else {
 			switch(command)
@@ -233,7 +243,7 @@ public class CardPanel extends JPanel implements ActionListener {
 //				selection = 0;
 //				current = tabStrings[selection];
 //				break;
-			case 13: tabStrings[selection] = current;
+			case 13:tabStrings[selection] = current;
 				selection = 1;
 				current = tabStrings[selection];
 				break;
@@ -241,7 +251,7 @@ public class CardPanel extends JPanel implements ActionListener {
 				selection = 2;
 				current = tabStrings[selection];
 				break;
-			case 15: tabStrings[selection] = current;
+			case 15:  tabStrings[selection] = current;
 			System.out.println("*** " + selection);
 			System.out.println("**** " + tabStrings[selection]);
 				selection = 3;
@@ -256,11 +266,15 @@ public class CardPanel extends JPanel implements ActionListener {
 //				current = tabStrings[2];
 //				System.out.println("HERE!");
 //				System.out.println(temp2 + " first " + temp3);
+				
 				if(checkReady(tabStrings[2], tabStrings[3])) {
 					//
 					System.out.println("*** " + firstLine);
+					System.out.println("value of the expiration date:" + tabStrings[3]);
+					System.out.println(validate(tabStrings[2], tabStrings[3]));
 					if(firstLine.equalsIgnoreCase("OPEN") && validate(tabStrings[2], tabStrings[3]))
 					{
+						System.out.println("Passed the test");
 						//get response
 						String[] one = {getInvoiceNo() + "", getInvoiceNo() + "", "POS BRAVO v1.0", tabStrings[2], tabStrings[3], tabStrings[0], tabStrings[0]};
 						Response response1 = new Response(1, one);
@@ -282,6 +296,22 @@ public class CardPanel extends JPanel implements ActionListener {
 						}
 						return;
 					} 
+					else
+					{
+						if(!validate(tabStrings[2], tabStrings[3])){
+							System.out.println("Validate failed");
+							if(luhnErr){
+								current = "Invalid Card Number";
+								luhnErr = false;
+							}
+							else{
+							current = "Expired Card";
+							}
+							tabText[selection] = "";
+							
+							reset = true;
+						}
+					}
 				}
 				if(firstLine.equalsIgnoreCase("PROGRESS") && tabStrings[1].matches("\\d{0,}\\.?\\d{0,2}"))					
 				{System.out.println("Done************");
@@ -597,6 +627,7 @@ public class CardPanel extends JPanel implements ActionListener {
 				System.out.println("validated");
 				return true;
 			}else {
+				luhnErr = true;
 				return false;
 			}
 		}
