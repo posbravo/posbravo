@@ -44,7 +44,7 @@ public class CardPanel extends JPanel implements ActionListener {
 	public CardPanel(boolean isAdmin__)
 	{
 		isAdmin = isAdmin__;
-		
+		int i;
 		tabPanel.removeAll();
 		display.removeAll();
 		display.removeKeyListener(listen);
