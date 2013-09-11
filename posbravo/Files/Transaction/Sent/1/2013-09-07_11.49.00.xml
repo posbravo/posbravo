@@ -10,8 +10,8 @@
 		<RecordNo>RecordNumberRequested</RecordNo>
 		<PartialAuth>Allow</PartialAuth>
 		<Account>
-			<AcctNo>4003000123456781</AcctNo>
-			<ExpDate>1215</ExpDate>
+			<AcctNo>222222222226</AcctNo>
+			<ExpDate>1220</ExpDate>
 		</Account>
 		<Amount>
 			<Purchase>20.98</Purchase>

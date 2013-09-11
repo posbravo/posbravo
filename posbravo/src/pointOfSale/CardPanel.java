@@ -43,6 +43,21 @@ public class CardPanel extends JPanel implements ActionListener {
 	
 	private static boolean reset = false;
 	private static boolean luhnErr = false;
+	private static boolean digErr = false;
+	private static boolean retrn = true;
+	private static String temp = "";
+	
+	private static MenuButton one = null;
+	private static MenuButton two = null;
+	private static MenuButton thr = null;
+	private static MenuButton fur = null;
+	private static MenuButton fiv = null;
+	private static MenuButton six = null;
+	private static MenuButton sev = null;
+	private static MenuButton eig = null;
+	private static MenuButton nin = null;
+	private static MenuButton zer = null;
+	private static MenuButton dot = null;
 	
 	public CardPanel(boolean isAdmin__)
 	{
@@ -65,22 +80,33 @@ public class CardPanel extends JPanel implements ActionListener {
 		tabPanel.add(cardNumButton);
 		tabPanel.add(cardExpButton);
 	
+		one = new MenuButton("1", "1", this);
+		two = new MenuButton("2", "2", this);
+		thr = new MenuButton("3", "3", this);
+		fur = new MenuButton("4", "4", this);
+		fiv = new MenuButton("5", "5", this);
+		six = new MenuButton("6", "6", this);
+		sev = new MenuButton("7", "7", this);
+		eig = new MenuButton("8", "8", this);
+		nin = new MenuButton("9", "9", this);
+		zer = new MenuButton("0", "0", this);
+		dot = new MenuButton(".", "11", this);
 		
-		buttonPanel.add(new MenuButton("1", "1", this));
-		buttonPanel.add(new MenuButton("2", "2", this));
-		buttonPanel.add(new MenuButton("3", "3", this));
+		buttonPanel.add(one);
+		buttonPanel.add(two);
+		buttonPanel.add(thr);
 		
-		buttonPanel.add(new MenuButton("4", "4", this));
-		buttonPanel.add(new MenuButton("5", "5", this));
-		buttonPanel.add(new MenuButton("6", "6", this));
+		buttonPanel.add(fur);
+		buttonPanel.add(fiv);
+		buttonPanel.add(six);
 		
-		buttonPanel.add(new MenuButton("7", "7", this));
-		buttonPanel.add(new MenuButton("8", "8", this));
-		buttonPanel.add(new MenuButton("9", "9", this));
+		buttonPanel.add(sev);
+		buttonPanel.add(eig);
+		buttonPanel.add(nin);
 		
 		buttonPanel.add(new MenuButton("<-", "10", this));
-		buttonPanel.add(new MenuButton("0", "0", this));
-		buttonPanel.add(new MenuButton(".", "11", this));
+		buttonPanel.add(zer);
+		buttonPanel.add(dot);
 		
 		if(isAdmin) {
 			bottomPanel.add(new MenuButton("VOID", "17", this));
@@ -218,10 +244,28 @@ public class CardPanel extends JPanel implements ActionListener {
 		int command = Integer.parseInt(event.getActionCommand());
 		
 		if(reset){
+			tabText[selection] = temp;
+			selection = 3;
 			current = tabStrings[selection];
 			reset = false;
-			tabText[selection] = "Expiration Date (MMYY): ";
+			enableButtons();
 		}
+		else if(luhnErr){
+			tabText[selection] = temp;
+			selection = 2;
+			current = tabStrings[selection];
+			luhnErr = false;
+			enableButtons();
+		
+		}
+		else if(digErr){
+			current = tabStrings[selection];
+			tabText[selection] = temp;
+			digErr = false;
+			enableButtons();
+		
+		}
+		
 		
 		if (command < 10)
 		{
@@ -232,7 +276,12 @@ public class CardPanel extends JPanel implements ActionListener {
 			{
 			case 10: 
 				if(current.length() > 0) {
+					if(retrn){
 					current = current.substring(0,current.length() - 1);
+					
+					}
+					
+					retrn = true;
 				}
 				break;
 			case 11: if(!current.contains(".") && selection == 1) {
@@ -302,16 +351,27 @@ public class CardPanel extends JPanel implements ActionListener {
 							System.out.println("Validate failed");
 							if(luhnErr){
 								current = "Invalid Card Number";
-								luhnErr = false;
+								
 							}
 							else{
 							current = "Expired Card";
+							reset = true;	
 							}
+							retrn = false;
+							disableButtons();
+							temp = tabText[selection];
 							tabText[selection] = "";
 							
-							reset = true;
+							
 						}
 					}
+				}
+				else{
+					current = "Incorrect digits of Card number (10-17) or Expiration date (4)";
+					temp = tabText[selection];
+					tabText[selection] = "";
+					digErr = true;	retrn = false;
+					disableButtons();
 				}
 				if(firstLine.equalsIgnoreCase("PROGRESS") && tabStrings[1].matches("\\d{0,}\\.?\\d{0,2}"))					
 				{System.out.println("Done************");
@@ -659,6 +719,31 @@ public class CardPanel extends JPanel implements ActionListener {
 		if(set){display.requestFocusInWindow();}
 
 	}
-
+	private static void disableButtons(){
+		one.setEnabled(false);
+		two.setEnabled(false);
+		thr.setEnabled(false);
+		fur.setEnabled(false);
+		fiv.setEnabled(false);
+		six.setEnabled(false);
+		sev.setEnabled(false);
+		eig.setEnabled(false);
+		nin.setEnabled(false);	
+		zer.setEnabled(false);
+		dot.setEnabled(false);
+	}
+	private static void enableButtons(){
+		one.setEnabled(true);
+		two.setEnabled(true);
+		thr.setEnabled(true);
+		fur.setEnabled(true);
+		fiv.setEnabled(true);
+		six.setEnabled(true);
+		sev.setEnabled(true);
+		eig.setEnabled(true);
+		nin.setEnabled(true);
+		zer.setEnabled(true);
+		dot.setEnabled(true);
+	}
 	
 }
