@@ -20,7 +20,7 @@ public class Response{
 	
 	private final String webURL = "https://w1.mercurydev.net/ws/ws.asmx";
 	private int type;
-	private String merchantID /*"023358150511666""395347306=TOKEN"*/  ,tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData;
+	private String merchantID /*"023358150511666""395347306=TOKEN"*/  ,tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
 	private String password /*= "123TOKEN"*/;
 	private String result = "", response = "";
 	
@@ -67,7 +67,19 @@ public class Response{
 			result = getResult3();
 			break;
 			//case for encrypted reader
-		}
+		case 4:
+			tranCode = "PreAuth";
+			invoiceNo = data[0];
+			refNo = data[1];
+			memo = data[2];
+			recordNo = "RecordNumberRequested";
+			encryptedKey = data[3];
+			encryptedBlock = data[4];
+			purchase = data[5];
+			authorize = data[6];
+			gratuity = "0.0";
+			result = getResult4();
+		break;		}
 		
 		//System.out.println(result);
 		send();
@@ -94,13 +106,15 @@ public class Response{
 		}
 		catch(IOException e){
 			e.printStackTrace();}}
-		this.merchantID = properties.getProperty("merchantID");
+		this.merchantID = properties.getProperty("merchantID2");
 		this.tranType = properties.getProperty("tranType");
 		this.frequency = properties.getProperty("frequency");
 		this.partialAuth = properties.getProperty("partialAuth");
-		this.password = properties.getProperty("password");
+		this.password = properties.getProperty("password2");
 		
 	}
+	 
+	 //<?xml version="1.0"?> <TStream>  <Transaction>   <MerchantID>395347308=E2ETKN</MerchantID>   <TranType>Credit</TranType>   <TranCode>PreAuth</TranCode>   <InvoiceNo>16</InvoiceNo>   <RefNo>16</RefNo> //use RefNo=InvoiceNo on PreAuth requests   <Memo>MPS Example XML v1.0</Memo>         <PartialAuth>Allow</PartialAuth> //Required to "Allow" partial approvals   <Frequency>OneTime</Frequency> //use to request a Token for "one time" use(6 months)   <RecordNo>RecordNumberRequested</RecordNo>   <Account> //use for encrypted data elements in place of Track1 or Track2    <EncryptedFormat>MagneSafe</EncryptedFormat>   <AccountSource>Swiped</AccountSource>   <EncryptedBlock>F40DDBA1F645CC8DB85A6459D45AFF8002C244A0F74402B479 ABC9915EC9567C81BE99CE4483AF3D</EncryptedBlock> //for E2E (P2PE), always use Track2 block <EncryptedKey>9012090B01C4F200002B</EncryptedKey>  </Account>   <Amount>    <Purchase>2.00</Purchase> //Purchase=Authorize on request    <Authorize>2.00</Authorize>   </Amount>  </Transaction> </TStream> 
 	
 	private String getResult1()
 	{
@@ -198,6 +212,44 @@ public class Response{
 		temp += "</ProcessData>\n\t\t\t<AuthCode>";
 		temp += authCode;
 		temp += "</AuthCode>\n\t\t</TranInfo>\n\t</Transaction>\n</TStream>";
+		
+		return temp;
+	}
+	//for magtek ipad 100kb
+	private String getResult4()
+	{
+		String temp = "";
+		temp += "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";
+		temp += merchantID;
+		temp += "</MerchantID>\n\t\t<TranType>";
+		temp += tranType;
+		temp += "</TranType>\n\t\t<TranCode>";
+		temp += tranCode;
+		temp += "</TranCode>\n\t\t<InvoiceNo>";
+		temp += invoiceNo;
+		temp += "</InvoiceNo>\n\t\t<RefNo>";
+		temp += refNo;
+		temp += "</RefNo>\n\t\t<Memo>";
+		temp += memo;
+		temp += "</Memo>\n\t\t<PartialAuth>";
+		temp += partialAuth;
+		temp += "</PartialAuth>\n\t\t<Frequency>";
+		temp += frequency;
+		temp += "</Frequency>\n\t\t<RecordNo>";
+		temp += recordNo;
+		temp += "</RecordNo>";
+		temp += "\n\t\t<Account>";
+		temp += "\n\t\t\t<EncryptedFormat>MagneSafe</EncryptedFormat>\n\t\t\t<AccountSource>Swiped</AccountSource>";
+		temp += "\n\t\t\t<EncryptedBlock>";
+		temp += encryptedBlock;
+		temp += "</EncryptedBlock>\n\t\t\t<EncryptedKey>";
+		temp += encryptedKey;
+		temp += "</EncryptedKey>\n\t\t</Account>";
+		temp += "\n<Amount>\n\t\t\t<Purchase>";
+		temp += purchase;
+		temp += "</Purchase>\n\t\t\t<Authorize>";
+		temp += authorize;
+		temp += "</Authorize>\n\t\t</Amount>\n\t</Transaction>\n</TStream>";
 		
 		return temp;
 	}

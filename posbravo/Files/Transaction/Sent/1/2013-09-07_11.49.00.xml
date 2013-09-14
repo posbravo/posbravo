@@ -1,19 +1,21 @@
 <TStream>
 	<Transaction>
-		<MerchantID>395347306=TOKEN</MerchantID>
+		<MerchantID>395347308=E2ETKN</MerchantID>
 		<TranType>Credit</TranType>
 		<TranCode>PreAuth</TranCode>
-		<InvoiceNo>6</InvoiceNo>
-		<RefNo>6</RefNo>
+		<InvoiceNo>3</InvoiceNo>
+		<RefNo>3</RefNo>
 		<Memo>POS BRAVO v1.0</Memo>
+		<PartialAuth>Allow</PartialAuth>
 		<Frequency>OneTime</Frequency>
 		<RecordNo>RecordNumberRequested</RecordNo>
-		<PartialAuth>Allow</PartialAuth>
 		<Account>
-			<AcctNo>222222222226</AcctNo>
-			<ExpDate>1220</ExpDate>
+			<EncryptedFormat>MagneSafe</EncryptedFormat>
+			<AccountSource>Swiped</AccountSource>
+			<EncryptedBlock>997061E0AF30741E20A6E28A8DA4BC6FF17D9AFE9967124B7385FF6F9057D2E6ACFE40C3BAA8286D</EncryptedBlock>
+			<EncryptedKey>9500030000081C20002A</EncryptedKey>
 		</Account>
-		<Amount>
+<Amount>
 			<Purchase>20.98</Purchase>
 			<Authorize>20.98</Authorize>
 		</Amount>

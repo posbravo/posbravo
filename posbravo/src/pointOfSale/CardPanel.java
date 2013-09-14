@@ -126,13 +126,23 @@ public class CardPanel extends JPanel implements ActionListener {
 		public void keyTyped(KeyEvent e) {
 			if(e.getKeyChar() == '\n') {
 				//switch for generics or encrypted mag reader
-				parseSwipe();
+				
+				String readerType = checkReader(swipe);
 				swipe = "";
-				if(firstLine.equalsIgnoreCase("OPEN") && validate(tabStrings[2], tabStrings[3]))
+				if(true) //firstLine.equalsIgnoreCase("OPEN") && validate(tabStrings[2], tabStrings[3]))
 				{
 					//get response
+					Response response1 = null;
+					if(readerType.equals("IPAD100KB")){
+					String[] four = {getInvoiceNo() + "", getInvoiceNo() + "", "POS BRAVO v1.0", tabStrings[2], tabStrings[3], tabStrings[0], tabStrings[0]};	
+					//String four[] = {"16", "16", "POS BRAVO v1.0", "9500030000081C20001A", "2B11F45ABEE6A6B288A76FED3BBCCE63130970C742BDD607D75F09821AAF2C6482F1AB593E0A97BA", "2.00", "2.00"}; 
+					response1 = new Response(4, four);
+					}
+					else
+					{
 					String[] one = {getInvoiceNo() + "", getInvoiceNo() + "", "POS BRAVO v1.0", tabStrings[2], tabStrings[3], tabStrings[0], tabStrings[0]};
-					Response response1 = new Response(1, one);
+					response1 = new Response(1, one);
+					}
 					saveTransaction(response1.getXML(), response1.getResponse(), 1);
 					if(response1.getResponse().contains("Approved")) {
 						ProcessPanel.closeReceipt("PROGRESS");
@@ -169,7 +179,7 @@ public class CardPanel extends JPanel implements ActionListener {
 		}
 	}
 	//need to change with different card reader
-	private void parseSwipe() {
+	private static void parseSwipe() {
 		Scanner regex = new Scanner(swipe);
 		System.out.println(swipe);
 		String temp = regex.findInLine(";\\d{10,20}=");
@@ -189,6 +199,32 @@ public class CardPanel extends JPanel implements ActionListener {
 		tabStrings[3] = temp;
 		regex.close();//%B4003000123456781^TEST/MPS^15121010000000000?;4003000123456781=15125025432198712345?
 				
+	}
+	private static void parseSwipeE(){
+		Scanner regex = new Scanner(swipe);
+		System.out.println(swipe);
+		String [] firstsplit = swipe.split("\\|");
+		System.out.println("-----------------------------");
+		for(String s : firstsplit){
+			System.out.println(s);
+		}
+		System.out.println("-----------------------------");
+		String temp = firstsplit[4].substring(2);
+		System.out.println(temp + "\nEmpty");
+		tabStrings[3] = temp;
+		
+		regex.close();
+		regex = new Scanner(swipe);
+
+		//System.out.println("********* " + temp);
+		//temp = temp.substring(1, 5);
+		//System.out.println("********* " + temp);
+		//temp = temp.substring(2) + temp.subSequence(0, 2);
+
+		//System.out.println("********* " + temp);
+		
+		tabStrings[2] = firstsplit[12].substring(3);
+		regex.close();//%B4003000123456781^TEST/MPS^15121010000000000?;4003000123456781=15125025432198712345?
 	}
 	
 	public static void loadReciept(File receipt)
@@ -275,6 +311,7 @@ public class CardPanel extends JPanel implements ActionListener {
 			switch(command)
 			{
 			case 10: 
+				DisplayFocus(true);
 				if(current.length() > 0) {
 					if(retrn){
 					current = current.substring(0,current.length() - 1);
@@ -296,7 +333,8 @@ public class CardPanel extends JPanel implements ActionListener {
 				selection = 1;
 				current = tabStrings[selection];
 				break;
-			case 14: tabStrings[selection] = current;
+			case 14: DisplayFocus(true);
+				tabStrings[selection] = current;
 				selection = 2;
 				current = tabStrings[selection];
 				break;
@@ -718,6 +756,21 @@ public class CardPanel extends JPanel implements ActionListener {
 	public static void DisplayFocus(boolean set) {
 		if(set){display.requestFocusInWindow();}
 
+	}
+	public static String checkReader(String swipe){
+		swipe = swipe.substring(2,11);
+		String retrn;
+		switch(swipe){
+		case "IPAD100KB":
+			retrn = "IPAD100KB";
+			//set merchantID and password
+			parseSwipeE();
+			return retrn;
+		default: 
+			retrn = "nonecrypted";
+			parseSwipe();
+			return retrn;
+		}
 	}
 	private static void disableButtons(){
 		one.setEnabled(false);

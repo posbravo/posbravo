@@ -1,8 +1,24 @@
 <?xml version="1.0"?><RStream>
 	<CmdResponse>
-		<ResponseOrigin>Server</ResponseOrigin>
-		<DSIXReturnCode>000100</DSIXReturnCode>
-		<CmdStatus>Error</CmdStatus>
-		<TextResponse>OTHER NOT ACCEPTED.</TextResponse>
+		<ResponseOrigin>Processor</ResponseOrigin>
+		<DSIXReturnCode>000000</DSIXReturnCode>
+		<CmdStatus>Declined</CmdStatus>
+		<TextResponse>DECLINE</TextResponse>
 		<UserTraceData></UserTraceData>
-	</CmdResponse></RStream>
+	</CmdResponse>
+	<TranResponse>
+		<MerchantID>395347308</MerchantID>
+		<AcctNo>400300XXXXXX6781</AcctNo>
+		<ExpDate>XXXX</ExpDate>
+		<CardType>VISA</CardType>
+		<TranCode>PreAuth</TranCode>
+		<InvoiceNo>3</InvoiceNo>
+		<Memo>POS BRAVO v1.0</Memo>
+		<Amount>
+			<Purchase>20.98</Purchase>
+			<Authorize>20.98</Authorize>
+		</Amount>
+		<AcqRefData>aNd5</AcqRefData>
+		<RecordNo>O2TzYEy5Wfl2v3hXplmz6m+S1cC4BcowIhESEAAjEAgZAg==</RecordNo>
+		<ProcessData>|14|410100201000</ProcessData>
+	</TranResponse></RStream>
