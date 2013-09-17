@@ -55,6 +55,7 @@ public class ProcessPanel extends JPanel implements ActionListener {
 				// TODO Auto-generated method stub
 				if(arg0.getClickCount() >= 2)
 					{if(receiptList.getSelectedIndex() > -1){
+						CardPanel.reset();
 						CardPanel.DisplayFocus(true);
 						ReceiptPanel.loadReceipt(receiptList.getSelectedValue());
 						CardPanel.loadReciept(new File(RECEIPT_PATH + "/" + receiptList.getSelectedValue()));

@@ -20,11 +20,14 @@ public class Response{
 	
 	private final String webURL = "https://w1.mercurydev.net/ws/ws.asmx";
 	private int type;
-	private String merchantID /*"023358150511666""395347306=TOKEN"*/  ,tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
-	private String password /*= "123TOKEN"*/;
+	private static String merchantID /*"023358150511666""395347306=TOKEN"*/  ,tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
+	private static String password /*= "123TOKEN"*/;
 	private String result = "", response = "";
 	
-
+    public Response()
+    {
+    
+    }
 	
 	public Response(int type__, String[] data)
 	{
@@ -80,38 +83,39 @@ public class Response{
 			gratuity = "0.0";
 			result = getResult4();
 		break;		}
-		
+		System.out.println(password);
 		//System.out.println(result);
 		send();
 		
 	}
 	
-	 private void onLoad() {
-		properties = new Properties();
-		file = new File("Files/Properties/MercuryMerchantIDDev.properties");
-		try {
-			fileReader  = new FileInputStream(file);
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		
-		//InputStream fileReader2 = getClass().getResourceAsStream("/Files/Properties/MercuryMerchantIDDev.properties");
+	 private void initProperties(){
+			properties = new Properties();
+			file = new File("Files/Properties/MercuryMerchantIDDev.properties");
+			try {
+				fileReader  = new FileInputStream(file);
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			
+			//InputStream fileReader2 = getClass().getResourceAsStream("/Files/Properties/MercuryMerchantIDDev.properties");
 
-		try{
-		properties.load(fileReader);}catch(IOException e){
-			e.printStackTrace();}
-		finally{try{fileReader.close();fileReader = null;
-		}
-		catch(IOException e){
-			e.printStackTrace();}}
-		this.merchantID = properties.getProperty("merchantID2");
+			try{
+			properties.load(fileReader);}catch(IOException e){
+				e.printStackTrace();}
+			finally{try{fileReader.close();fileReader = null;
+			}
+			catch(IOException e){
+				e.printStackTrace();}}
+	 }
+	 private void onLoad() {
+	    initProperties();
 		this.tranType = properties.getProperty("tranType");
 		this.frequency = properties.getProperty("frequency");
 		this.partialAuth = properties.getProperty("partialAuth");
-		this.password = properties.getProperty("password2");
-		
+
 	}
 	 
 	 //<?xml version="1.0"?> <TStream>  <Transaction>   <MerchantID>395347308=E2ETKN</MerchantID>   <TranType>Credit</TranType>   <TranCode>PreAuth</TranCode>   <InvoiceNo>16</InvoiceNo>   <RefNo>16</RefNo> //use RefNo=InvoiceNo on PreAuth requests   <Memo>MPS Example XML v1.0</Memo>         <PartialAuth>Allow</PartialAuth> //Required to "Allow" partial approvals   <Frequency>OneTime</Frequency> //use to request a Token for "one time" use(6 months)   <RecordNo>RecordNumberRequested</RecordNo>   <Account> //use for encrypted data elements in place of Track1 or Track2    <EncryptedFormat>MagneSafe</EncryptedFormat>   <AccountSource>Swiped</AccountSource>   <EncryptedBlock>F40DDBA1F645CC8DB85A6459D45AFF8002C244A0F74402B479 ABC9915EC9567C81BE99CE4483AF3D</EncryptedBlock> //for E2E (P2PE), always use Track2 block <EncryptedKey>9012090B01C4F200002B</EncryptedKey>  </Account>   <Amount>    <Purchase>2.00</Purchase> //Purchase=Authorize on request    <Authorize>2.00</Authorize>   </Amount>  </Transaction> </TStream> 
@@ -259,6 +263,7 @@ public class Response{
 		try {
 			MercuryWebRequest test = new MercuryWebRequest(webURL);
 			test.addParameter("tran", result);
+			System.out.println(password);
 			test.addParameter("pw", /*"123TOKEN""xyz" */password);
 			test.setWebMethodName("CreditTransaction");
 			test.setTimeout(30);
@@ -271,7 +276,16 @@ public class Response{
 		}
 		
 	}
-	
+	public void setIDnPas(String id){
+		initProperties();
+		this.merchantID = properties.getProperty(id);
+		System.out.println(merchantID);
+		String temp = id.substring(id.length()-1);
+		
+		temp = "password" + temp;
+		this.password = properties.getProperty(temp);
+		System.out.println(password);
+	}
 	public String getResponse() {
 		return this.response;
 	}

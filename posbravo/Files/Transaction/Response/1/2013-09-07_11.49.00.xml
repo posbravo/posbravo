@@ -7,7 +7,7 @@
 		<UserTraceData></UserTraceData>
 	</CmdResponse>
 	<TranResponse>
-		<MerchantID>395347308</MerchantID>
+		<MerchantID>395347306</MerchantID>
 		<AcctNo>400300XXXXXX6781</AcctNo>
 		<ExpDate>XXXX</ExpDate>
 		<CardType>VISA</CardType>
@@ -18,7 +18,7 @@
 			<Purchase>20.98</Purchase>
 			<Authorize>20.98</Authorize>
 		</Amount>
-		<AcqRefData>aNd5</AcqRefData>
-		<RecordNo>O2TzYEy5Wfl2v3hXplmz6m+S1cC4BcowIhESEAAjEAgZAg==</RecordNo>
-		<ProcessData>|14|410100201000</ProcessData>
+		<AcqRefData>KaNcAV  d5e00</AcqRefData>
+		<RecordNo>sYvMgDrU+d9bZ06EBElSOtmTKvp5ljnlIhESEAAjEAgdBw==</RecordNo>
+		<ProcessData>|14|410100701000</ProcessData>
 	</TranResponse></RStream>
