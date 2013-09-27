@@ -144,6 +144,7 @@ public class ProcessPanel extends JPanel implements ActionListener {
 
 		if (event.getActionCommand().equals("Load") && receiptList.getSelectedIndex() > -1)
 		{
+			CardPanel.reset();
 			CardPanel.DisplayFocus(true);
 			ReceiptPanel.loadReceipt(receiptList.getSelectedValue());
 			CardPanel.loadReciept(new File(RECEIPT_PATH + "/" + receiptList.getSelectedValue()));

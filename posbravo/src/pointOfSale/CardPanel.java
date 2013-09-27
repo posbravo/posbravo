@@ -13,10 +13,14 @@ import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 
 public class CardPanel extends JPanel implements ActionListener {
 
@@ -62,6 +66,10 @@ public class CardPanel extends JPanel implements ActionListener {
 	private static MenuButton zer = null;
 	private static MenuButton dot = null;
 
+	private static Timer timer = null;
+	private static boolean limiter = true;
+	private static int counter = 2;
+	
 	public CardPanel(boolean isAdmin__) {
 		isAdmin = isAdmin__;
 		tabPanel.removeAll();
@@ -123,6 +131,8 @@ public class CardPanel extends JPanel implements ActionListener {
 		add(display);
 		add(buttonPanel);
 		add(bottomPanel);
+		
+		timer = new Timer(1500, this);
 	}
 
 	private class KeyBarsListener extends KeyAdapter {
@@ -139,6 +149,7 @@ public class CardPanel extends JPanel implements ActionListener {
 							"POS BRAVO v1.0", tabStrings[2], tabStrings[3],
 							tabStrings[0], tabStrings[0] };
 					response1 = new Response(4, four);
+				
 					processXML(response1);
 				} else {
 					if (firstLine.equalsIgnoreCase("OPEN")
@@ -181,13 +192,18 @@ public class CardPanel extends JPanel implements ActionListener {
 			tabStrings = new String[] { "", "", "", "" };
 			SystemInit.setTransactionScreen();
 		} else {
-			String response = getText(response1.getResponse());
+			String[] response = getText(response1.getResponse()).split("/");
 			// Scanner regex = new Scanner(response1.getResponse().trim());
 			// String error =
 			// regex.findInLine("<TextResponse>No Live Cards on Test Merchant ID Allowed[\\.]</TextResponse>");
 			// System.out.println(response1.getResponse());
 			// System.out.println(error);
-			display.setText("Rejected: " + response/*
+	        String responsef = response[0];
+			if(response[1].equals("001007") || response[1].equals("003010")){
+				responsef = response[0] + " Please redo the transaction.";
+				
+			}
+			display.setText("Rejected: " + responsef/*
 													 * + error.substring(
 													 * "<TextResponse>"
 													 * .length(), error.length()
@@ -196,6 +212,7 @@ public class CardPanel extends JPanel implements ActionListener {
 													 * ())
 													 */);
 			// regex.close();
+		
 			tabStrings[2] = "";
 			tabStrings[3] = "";
 			current = "";
@@ -234,20 +251,26 @@ public class CardPanel extends JPanel implements ActionListener {
 	}
 
 	private static void parseSwipeE() {
-		// Scanner regex = new Scanner(swipe);
+		Scanner regex = new Scanner(swipe);
+		
 		System.out.println(swipe);
-		String[] firstsplit = swipe.split("\\|");
+		//String[] firstsplit = swipe.split("\\|");
 		System.out.println("-----------------------------");
-		for (String s : firstsplit) {
-			System.out.println(s);
-		}
+		//for (String s : firstsplit) {
+			//System.out.println(s);
+			//if(s.matches("")){
+				
+		//	}
+	//	}
 		System.out.println("-----------------------------");
-		String temp = firstsplit[4].substring(2);
-		System.out.println(temp + "\nEmpty");
-		tabStrings[3] = temp;
+		StringBuilder temp = new StringBuilder(regex.findInLine("3~.*\\|4"));
+		System.out.println(temp);
+		//System.out.println(temp + "\nEmpty");
+		tabStrings[3] = temp.substring(2, temp.length()-2);
 
-		// regex.close();
-		// regex = new Scanner(swipe);
+		System.out.println(tabStrings[3]);
+		regex.close();
+		regex = new Scanner(swipe);
 
 		// System.out.println("********* " + temp);
 		// temp = temp.substring(1, 5);
@@ -255,9 +278,11 @@ public class CardPanel extends JPanel implements ActionListener {
 		// temp = temp.substring(2) + temp.subSequence(0, 2);
 
 		// System.out.println("********* " + temp);
-
-		tabStrings[2] = firstsplit[12].substring(3);
-		// regex.close();//%B4003000123456781^TEST/MPS^15121010000000000?;4003000123456781=15125025432198712345?
+		temp.replace(0, temp.length(), regex.findInLine("11~.*\\|12"));
+		System.out.println(temp);
+		tabStrings[2] = temp.substring(3, temp.length()-3);
+		System.out.println(tabStrings[2]);
+		regex.close();//%B4003000123456781^TEST/MPS^15121010000000000?;4003000123456781=15125025432198712345?
 	}
 
 	public static void loadReciept(File receipt) {
@@ -307,48 +332,65 @@ public class CardPanel extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		int command = Integer.parseInt(event.getActionCommand());
-
+		int command = 100;
+		if(event.getActionCommand() != null){
+			if(retrn){
+				command = Integer.parseInt(event.getActionCommand());
+			}
+			else{
+				retrn = true;
+			}
+		}
 		if (reset) {
 			tabText[selection] = temp;
 			selection = 3;
 			current = tabStrings[selection];
 			reset = false;
-			enableButtons();
+			timer.stop();
+		//	enableButtons();
 		} else if (luhnErr) {
 			tabText[selection] = temp;
 			selection = 2;
 			current = tabStrings[selection];
 			luhnErr = false;
-			enableButtons();
+			timer.stop();
+		//	enableButtons();
 
 		} else if (digErr) {
 			current = tabStrings[selection];
 			tabText[selection] = temp;
 			digErr = false;
-			enableButtons();
+			timer.stop();
+		//	enableButtons();
 
 		}
 
-		if (command < 10) {
-
+		if(!limiter){
 			current += command;
-		} else {
+		    }
+		    else if(counter < 2){
+		    current += command;
+		    counter++;
+		    } else {
 			switch (command) {
 			case 10:
 				DisplayFocus(true);
 				if (current.length() > 0) {
-					if (retrn) {
-						current = current.substring(0, current.length() - 1);
+                        if(current.charAt(current.length()-1) == '.'){
+                        	limiter = false;
+                        	}
+                        current = current.substring(0,current.length() - 1);
+                        if(counter > 0 && tipButton.isVisible()){
+                        	counter--;
+                        	}
 
-					}
-
-					retrn = true;
+			
 				}
 				break;
 			case 11:
 				if (!current.contains(".") && selection == 1) {
 					current += ".";
+					limiter = true;
 				}
 				break;
 			// case 12: tabStrings[selection] = current;
@@ -375,6 +417,8 @@ public class CardPanel extends JPanel implements ActionListener {
 
 				break;
 			case 16:
+				Response response1 = new Response(); 
+				response1.setIDnPas("merchantID1");
 				tabStrings[selection] = current;
 				System.out.println("Done************");
 				// final String temp2 = tabStrings[2], temp3 = tabStrings[3];
@@ -397,7 +441,7 @@ public class CardPanel extends JPanel implements ActionListener {
 								getInvoiceNo() + "", "POS BRAVO v1.0",
 								tabStrings[2], tabStrings[3], tabStrings[0],
 								tabStrings[0] };
-						Response response1 = new Response(1, one);
+						response1 = new Response(1, one);
 						saveTransaction(response1.getXML(),
 								response1.getResponse(), 1);
 						if (response1.getResponse().contains("Approved")) {
@@ -443,19 +487,21 @@ public class CardPanel extends JPanel implements ActionListener {
 								reset = true;
 							}
 							retrn = false;
-							disableButtons();
+						//	disableButtons();
 							temp = tabText[selection];
 							tabText[selection] = "";
 
 						}
 					}
 				} else {
+					if(!tipButton.isVisible()){
 					current = "Incorrect digits of Card number (10-17) or Expiration date (4)";
 					temp = tabText[selection];
 					tabText[selection] = "";
 					digErr = true;
 					retrn = false;
-					disableButtons();
+					//disableButtons();
+					}
 				}
 				if (firstLine.equalsIgnoreCase("PROGRESS")
 						&& tabStrings[1].matches("\\d{0,}\\.?\\d{0,2}")) {
@@ -492,6 +538,7 @@ public class CardPanel extends JPanel implements ActionListener {
 						tabStrings[2] = "";
 						tabStrings[3] = "";
 						current = "";
+						counter = 0;
 						Tools.update(display);
 					}
 					return;
@@ -538,11 +585,17 @@ public class CardPanel extends JPanel implements ActionListener {
 		}
 		// for keyboard input you will have to parse the text in display when
 		// the tabs are changed
-		System.out.println(current);
+	    
+	 	System.out.println(current);
 		display.setText(tabText[selection] + current);
-
+	    if(digErr || luhnErr || reset){
+	    	timer.start();
+	    }
+        if(command == 100){
+        	retrn = true;
+        }
 		Tools.update(display);
-
+	
 	}
 
 	protected static void saveTransaction(String sent, String response, int rev) {
@@ -850,17 +903,32 @@ public class CardPanel extends JPanel implements ActionListener {
 	}
 
 	protected static String getText(String in) {
+		System.out.println(in);
 		String[] lines = in.split("\n");
+		String temp = "";
 		for (int i = 0; i < lines.length; i++) {
-			System.out.println(lines[i]);
+			System.out.println(lines[i] + ":Get:");
+			//<DSIXReturnCode>000000</DSIXReturnCode>
+			if(lines[i].contains("DSIXReturnCode")){
+				temp = new Scanner(lines[i])
+				.findInLine("<DSIXReturnCode>[\\da-zA-Z\\s\\.]*</DSIXReturnCode>");
+				temp = temp.substring("<DSIXReturnCode>".length(),
+						temp.length() - "</DSIXReturnCode>".length());
+				
+			}
 			if (lines[i].contains("TextResponse")) {
 				String toReturn = new Scanner(lines[i])
-						.findInLine("<TextResponse>[\\da-zA-Z\\s\\.]*</TextResponse>");
+						.findInLine("<TextResponse>[\\da-zA-Z\\s\\.\\S]*</TextResponse>");
+		
 				toReturn = toReturn.substring("<TextResponse>".length(),
 						toReturn.length() - "</TextResponse>".length());
-				return toReturn;
+				return toReturn+ "/" + temp;
+			}
+			else if(lines[i].equals("Timeout")){
+				return "Client Timeout. Please check the Internet Connection.";
 			}
 		}
+		
 		return "Error";
 	}
 
@@ -873,7 +941,10 @@ public class CardPanel extends JPanel implements ActionListener {
 
 	public static String checkReader(String swipe, Response res) {
 		res = new Response();
+
 		swipe = swipe.substring(2, 11);
+
+
 		String retrn;
 		switch (swipe) {
 		case "IPAD100KB":

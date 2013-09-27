@@ -1,6 +1,6 @@
 <TStream>
 	<Transaction>
-		<MerchantID>null</MerchantID>
+		<MerchantID>395347308=E2ETKN</MerchantID>
 		<TranType>Credit</TranType>
 		<TranCode>PreAuthCaptureByRecordNo</TranCode>
 		<PartialAuth>Allow</PartialAuth>
@@ -9,9 +9,9 @@
 		<RecordNo>null</RecordNo>
 		<Frequency>OneTime</Frequency>
 		<Amount>
-			<Purchase>1.04</Purchase>
-			<Authorize>1.04</Authorize>
-			<Gratuity>.00</Gratuity>
+			<Purchase>10.49</Purchase>
+			<Authorize>10.49</Authorize>
+			<Gratuity>.12</Gratuity>
 		</Amount>
 		<TranInfo>
 			<AuthCode>null</AuthCode>

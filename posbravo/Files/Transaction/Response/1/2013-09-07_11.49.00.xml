@@ -2,23 +2,24 @@
 	<CmdResponse>
 		<ResponseOrigin>Processor</ResponseOrigin>
 		<DSIXReturnCode>000000</DSIXReturnCode>
-		<CmdStatus>Declined</CmdStatus>
-		<TextResponse>DECLINE</TextResponse>
+		<CmdStatus>Approved</CmdStatus>
+		<TextResponse>AP</TextResponse>
 		<UserTraceData></UserTraceData>
 	</CmdResponse>
 	<TranResponse>
-		<MerchantID>395347306</MerchantID>
-		<AcctNo>400300XXXXXX6781</AcctNo>
+		<MerchantID>395347308</MerchantID>
+		<AcctNo>400555XXXXXX0480</AcctNo>
 		<ExpDate>XXXX</ExpDate>
 		<CardType>VISA</CardType>
 		<TranCode>PreAuth</TranCode>
-		<InvoiceNo>3</InvoiceNo>
+		<AuthCode>VI2098</AuthCode>
+		<InvoiceNo>14</InvoiceNo>
 		<Memo>POS BRAVO v1.0</Memo>
 		<Amount>
 			<Purchase>20.98</Purchase>
 			<Authorize>20.98</Authorize>
 		</Amount>
-		<AcqRefData>KaNcAV  d5e00</AcqRefData>
-		<RecordNo>sYvMgDrU+d9bZ06EBElSOtmTKvp5ljnlIhESEAAjEAgdBw==</RecordNo>
-		<ProcessData>|14|410100701000</ProcessData>
+		<AcqRefData>aEb013264020902550cRBBDd5e00fJj103333326452320333lA  m000005</AcqRefData>
+		<RecordNo>NFzO4Zx3aIsR8LmIygC/2kSpRqG6xnK7IhESEAAjEAglbg==</RecordNo>
+		<ProcessData>|14|410100201000</ProcessData>
 	</TranResponse></RStream>

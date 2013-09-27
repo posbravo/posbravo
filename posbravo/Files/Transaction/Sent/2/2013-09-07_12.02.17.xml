@@ -1,21 +1,21 @@
 <TStream>
 	<Transaction>
-		<MerchantID>395347306=TOKEN</MerchantID>
+		<MerchantID>395347306=TOKEN  </MerchantID>
 		<TranType>Credit</TranType>
-		<TranCode>PreAuth</TranCode>
-		<InvoiceNo>6</InvoiceNo>
-		<RefNo>6</RefNo>
-		<Memo>POS BRAVO v1.0</Memo>
-		<Frequency>OneTime</Frequency>
-		<RecordNo>RecordNumberRequested</RecordNo>
+		<TranCode>PreAuthCaptureByRecordNo</TranCode>
 		<PartialAuth>Allow</PartialAuth>
-		<Account>
-			<AcctNo>4003000123456781</AcctNo>
-			<ExpDate>1215</ExpDate>
-		</Account>
+		<InvoiceNo>null</InvoiceNo>
+		<RefNo>null</RefNo>
+		<RecordNo>null</RecordNo>
+		<Frequency>OneTime</Frequency>
 		<Amount>
 			<Purchase>10.49</Purchase>
 			<Authorize>10.49</Authorize>
+			<Gratuity>.55</Gratuity>
 		</Amount>
+		<TranInfo>
+			<AuthCode>null</AuthCode>
+			<AcqRefData>null</AcqRefData>
+		</TranInfo>
 	</Transaction>
 </TStream>

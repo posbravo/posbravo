@@ -185,6 +185,7 @@ public class MercuryWebRequest
 		// Determine response stream according to HTTP response code
 		int httpResponseCode = conn.getResponseCode();
 		BufferedReader rd;
+	
 		if (httpResponseCode != 200)
 			rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
 		else
