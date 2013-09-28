@@ -1,0 +1,8 @@
+<?xml version="1.0"?><RStream>
+	<CmdResponse>
+		<ResponseOrigin>Server</ResponseOrigin>
+		<DSIXReturnCode>004121</DSIXReturnCode>
+		<CmdStatus>Error</CmdStatus>
+		<TextResponse>ByRecordNo Transactions must have a RecordNo and Frequency.</TextResponse>
+		<UserTraceData></UserTraceData>
+	</CmdResponse></RStream>

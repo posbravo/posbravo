@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.Scanner;
 
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -58,6 +59,9 @@ public class CardPanel extends JPanel implements ActionListener {
 	private static MenuButton nin = null;
 	private static MenuButton zer = null;
 	private static MenuButton dot = null;
+	
+	private static boolean limiter = true;
+	private static int counter = 2;
 	
 	public CardPanel(boolean isAdmin__)
 	{
@@ -242,42 +246,64 @@ public class CardPanel extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		int command = Integer.parseInt(event.getActionCommand());
+		System.out.println(limiter);
 		
 		if(reset){
 			tabText[selection] = temp;
+			reset = false;
+			/*
 			selection = 3;
 			current = tabStrings[selection];
-			reset = false;
-			enableButtons();
+			*/
+			//enableButtons();
 		}
 		else if(luhnErr){
 			tabText[selection] = temp;
+			luhnErr = false;
+			/*
+			
 			selection = 2;
 			current = tabStrings[selection];
-			luhnErr = false;
-			enableButtons();
+			*/
+			//enableButtons();
 		
 		}
 		else if(digErr){
 			current = tabStrings[selection];
-			tabText[selection] = temp;
 			digErr = false;
-			enableButtons();
+			/*
+			tabText[selection] = temp;
+			*/
+			//enableButtons();
 		
 		}
 		
 		
 		if (command < 10)
 		{
-		
-			current += command;
+			
+		    if(!limiter ){
+			    current += command;
+		    }
+		    else if(counter < 2){
+		    current += command;
+		    counter++;
+		    
+		    }
 		} else {
 			switch(command)
 			{
 			case 10: 
 				if(current.length() > 0) {
 					if(retrn){
-					current = current.substring(0,current.length() - 1);
+
+						if(current.charAt(current.length()-1) == '.'){
+						limiter = false;
+						}
+					    current = current.substring(0,current.length() - 1);
+						if(counter > 0 && tipButton.isVisible()){
+						counter--;
+						}
 					
 					}
 					
@@ -286,6 +312,7 @@ public class CardPanel extends JPanel implements ActionListener {
 				break;
 			case 11: if(!current.contains(".") && selection == 1) {
 					current += ".";
+					limiter = true;
 				}
 				break;
 //			case 12: tabStrings[selection] = current;
@@ -358,7 +385,7 @@ public class CardPanel extends JPanel implements ActionListener {
 							reset = true;	
 							}
 							retrn = false;
-							disableButtons();
+							//disableButtons();
 							temp = tabText[selection];
 							tabText[selection] = "";
 							
@@ -366,12 +393,15 @@ public class CardPanel extends JPanel implements ActionListener {
 						}
 					}
 				}
-				else{
+				else {
+					if(!tipButton.isVisible()){
 					current = "Incorrect digits of Card number (10-17) or Expiration date (4)";
 					temp = tabText[selection];
 					tabText[selection] = "";
 					digErr = true;	retrn = false;
-					disableButtons();
+					//disableButtons();
+					}
+					
 				}
 				if(firstLine.equalsIgnoreCase("PROGRESS") && tabStrings[1].matches("\\d{0,}\\.?\\d{0,2}"))					
 				{System.out.println("Done************");
@@ -385,6 +415,7 @@ public class CardPanel extends JPanel implements ActionListener {
 					if(response2.getResponse().contains("Approved")) {
 						ProcessPanel.closeReceipt("SWIPED");
 						tabStrings = new String[]{"","","",""};
+						counter = 0;
 						SystemInit.setTransactionScreen();
 					} else {
 						String response = getText(response2.getResponse());
@@ -394,6 +425,7 @@ public class CardPanel extends JPanel implements ActionListener {
 						//regex.close();
 						tabStrings[2] = ""; tabStrings[3] = "";
 						current = "";
+						counter = 0;
 						Tools.update(display);
 					}
 					return;
@@ -663,7 +695,6 @@ public class CardPanel extends JPanel implements ActionListener {
       
 		if((cal.get(Calendar.YEAR)%100) <= Integer.parseInt(expDate.substring(2))) {
 			
-			//possible error because Calendar.Month does not return correct date
 			if((cal.get(Calendar.MONTH) + 1) <= Integer.parseInt(expDate.substring(0, 2))) {
 				
 				toReturn = true;
@@ -745,5 +776,14 @@ public class CardPanel extends JPanel implements ActionListener {
 		zer.setEnabled(true);
 		dot.setEnabled(true);
 	}
-	
+	public static void setLimiter(boolean cond){
+		limiter = cond;
+	}
+	public static boolean tipVisible(){
+		return tipButton.isVisible();
+	}
+	public static void clearDisplay(){
+		display.setText("");
+	}
+
 }

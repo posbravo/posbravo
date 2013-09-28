@@ -56,9 +56,16 @@ public class ProcessPanel extends JPanel implements ActionListener {
 				if(arg0.getClickCount() >= 2)
 					{if(receiptList.getSelectedIndex() > -1){
 						CardPanel.DisplayFocus(true);
+						
 						ReceiptPanel.loadReceipt(receiptList.getSelectedValue());
 						CardPanel.loadReciept(new File(RECEIPT_PATH + "/" + receiptList.getSelectedValue()));
-						}}
+						if(!CardPanel.tipVisible()){
+							CardPanel.setLimiter(false);
+						}
+						else{
+							CardPanel.setLimiter(true);
+						}
+					}}
 			}
 			@Override
 			public void mouseEntered(MouseEvent arg0) {
@@ -158,6 +165,7 @@ public class ProcessPanel extends JPanel implements ActionListener {
 			closeReceipt("CARD");
 		if (event.getActionCommand().equals("Back"))
 			SystemInit.setTransactionScreen();
+		    CardPanel.clearDisplay();
 		
 	}
 

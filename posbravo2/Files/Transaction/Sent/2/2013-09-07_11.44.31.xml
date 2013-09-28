@@ -1,0 +1,21 @@
+<TStream>
+	<Transaction>
+		<MerchantID>023358150511666</MerchantID>
+		<TranType>Credit</TranType>
+		<TranCode>PreAuthCaptureByRecordNo</TranCode>
+		<PartialAuth>Allow</PartialAuth>
+		<InvoiceNo>null</InvoiceNo>
+		<RefNo>null</RefNo>
+		<RecordNo>null</RecordNo>
+		<Frequency>OneTime</Frequency>
+		<Amount>
+			<Purchase>1.04</Purchase>
+			<Authorize>1.04</Authorize>
+			<Gratuity>0</Gratuity>
+		</Amount>
+		<TranInfo>
+			<AuthCode>null</AuthCode>
+			<AcqRefData>null</AcqRefData>
+		</TranInfo>
+	</Transaction>
+</TStream>
