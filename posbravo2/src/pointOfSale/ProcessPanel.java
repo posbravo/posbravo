@@ -66,6 +66,7 @@ public class ProcessPanel extends JPanel implements ActionListener {
 						else{
 							CardPanel.setLimiter(true);
 						}
+						
 					}}
 			}
 			@Override
