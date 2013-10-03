@@ -84,6 +84,13 @@ public class CardPanel extends JPanel implements ActionListener {
 		listen = new KeyBarsListener();
 		display.addKeyListener(listen);
 		display.addMouseListener(new MouseAdapter(){
+			
+			public void mouseDragged(MouseEvent e){
+				if(e.getID() == MouseEvent.MOUSE_DRAGGED){
+					System.out.println("lala");
+				}
+			}
+			
 			public void mousePressed(MouseEvent e){
 				caretPosition();
 				
@@ -169,7 +176,6 @@ public class CardPanel extends JPanel implements ActionListener {
 		
 		public void keyReleased(KeyEvent e){
 			if(backspace && e.getKeyCode() != KeyEvent.VK_BACK_SPACE){
-				
 				String d = display.getText();
 				display.setText(d.substring(0, d.length()-1));
 				backspace = false;
@@ -217,18 +223,78 @@ public class CardPanel extends JPanel implements ActionListener {
 				}
 			} else {
 				String check = String.valueOf(e.getKeyChar());
-				if(check.matches("[^a-zA-z]")){
-					if(check.matches("[0-9]")){
-						swipe+= e.getKeyChar();
-					}
-				return;
+				boolean cond = (e.getKeyChar() == KeyEvent.VK_BACK_SPACE);
+				if(!tipButton.isVisible()){
+				
+				System.out.println(check);
+				swipe += check;
+				if(check.matches("[0-9]")){
+					
+					current += check;
 				}
+				
+
+			    if(current.length() > 0 && cond){
+			    	current = current.substring(0, current.length()-1);
+					
+			    }
+					/*if(check.matches("[0-9]")){
+						
+					
+					}*/
+
+			//	return;
+				
+				
 				
 				//current = swipe;
 			}
-			backspace = true;
-			
-
+			//backspace = true;
+				else{
+				    Scanner run = new Scanner(display.getText() + " ");
+				    run.useDelimiter(": ");
+				    String temp = "";
+				    while(run.hasNext()){
+				    	temp = run.next();
+				    }
+				    run.close();
+				    System.out.println("counter: = " + counter + " condition = " + (temp.length() == current.length()) + " temp = " + temp + "current = " + current);
+					if(cond){
+					  if((temp.length() == current.length())){
+						if(counter > 0){
+						counter--;
+						}
+						current = current.substring(0, current.length()-1);
+						System.out.println(current);
+					  }
+						return;
+					}
+					if(counter < 2){
+						if(check.matches("[0-9.]")){
+							boolean condtem = check.equals(".");
+							if(!condtem && !current.contains(".")){
+								current += check;
+								
+							}
+							else if(condtem && !current.contains(".")){
+							current += check;
+							counter = 0;
+							}
+							else if(!condtem){ 
+								counter++;
+								current += check;		
+							}
+							
+						}
+						else{
+							backspace = true;
+						}
+					}
+					else{
+						backspace = true;
+					}
+				System.out.println(current);}
+			}
 		}
 	}
 
@@ -469,6 +535,7 @@ public class CardPanel extends JPanel implements ActionListener {
 				
 				break;
 			case 15:
+				DisplayFocus(true);
 				tabStrings[selection] = current;
 				System.out.println("*** " + selection);
 				System.out.println("**** " + tabStrings[selection]);
