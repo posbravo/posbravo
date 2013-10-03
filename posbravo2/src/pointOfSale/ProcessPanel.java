@@ -56,6 +56,7 @@ public class ProcessPanel extends JPanel implements ActionListener {
 				if(arg0.getClickCount() >= 2)
 					
 					{if(receiptList.getSelectedIndex() > -1){
+						CardPanel.setLoaded(true);
 						CardPanel.reset();
 						CardPanel.DisplayFocus(true);
 						ReceiptPanel.loadReceipt(receiptList.getSelectedValue());
@@ -169,6 +170,8 @@ public class ProcessPanel extends JPanel implements ActionListener {
 		if (event.getActionCommand().equals("Back"))
 			SystemInit.setTransactionScreen();
 		    CardPanel.clearDisplay();
+		    CardPanel.setLoaded(false);
+		    CardPanel.timerCheck();
 	}
 
 	private void deleteReceipt() {
