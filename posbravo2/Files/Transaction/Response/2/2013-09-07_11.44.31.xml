@@ -1,8 +1,0 @@
-<?xml version="1.0"?><RStream>
-	<CmdResponse>
-		<ResponseOrigin>Server</ResponseOrigin>
-		<DSIXReturnCode>004119</DSIXReturnCode>
-		<CmdStatus>Error</CmdStatus>
-		<TextResponse>Token Service Unavailable. - 200 Response With Status:Failure Message:Token invalid</TextResponse>
-		<UserTraceData></UserTraceData>
-	</CmdResponse></RStream>

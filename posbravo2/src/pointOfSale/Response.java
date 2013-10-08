@@ -268,7 +268,6 @@ public class Response{
 			test.setWebMethodName("CreditTransaction");
 			test.setTimeout(timeout);
 			String response = test.sendRequest();
-			
 			if(response.contains("\t")){
 			this.response = response.replaceAll(">\t", ">\n\t");}
 			else{this.response = response.replaceAll("><", ">\n\t<").replaceAll("> {3,6}", ">\n\t");}
@@ -277,10 +276,14 @@ public class Response{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			if(e instanceof java.net.ConnectException || e instanceof java.net.UnknownHostException){
-			this.response = "Timeout";
+				this.response = "Timeout";
+			}
+			else if(e instanceof java.net.SocketTimeoutException){
+				this.response = "Timeout2";
 			}
 			
 		}
+		
 		
 	}
 	public void setIDnPas(String id){

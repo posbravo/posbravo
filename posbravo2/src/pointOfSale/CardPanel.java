@@ -32,16 +32,16 @@ public class CardPanel extends JPanel implements ActionListener {
 	private static final String RECEIPT_PATH = "Files/Receipts";
 	private static final String RECEIPT_LIST = RECEIPT_PATH + "/ReceiptList";
 	private static final String[] tabText = { "", "Tip: ", "Card Number: ",
-			"Expiration Date (MMYY): " };
+			"Expiration Date (MMYY): ", "CVV: "};
 
-	private static JPanel tabPanel = new JPanel(new GridLayout(1, 3));
+	private static JPanel tabPanel = new JPanel(new GridLayout(1, 4));
 	private static JTextField display = new JTextField("", 20);
 
 	private static JPanel buttonPanel = new JPanel(new GridLayout(4, 3));
 	private static JPanel bottomPanel = new JPanel(new GridLayout(1, 3));
 	private static MenuButton tipButton = null, cardNumButton = null,
-			cardExpButton = null;
-	private static String tabStrings[] = { "", "", "", "" };
+			cardExpButton = null, cvvButton = null;
+	private static String tabStrings[] = { "", "", "", "", "" };
 	private static String current = "";
 	private static int selection = 0;
 	private static File receiptSave = null;
@@ -74,6 +74,7 @@ public class CardPanel extends JPanel implements ActionListener {
 	private static Timer timer = null;
 	private static boolean limiter = true;
 	private static int counter = 2;
+	private static int deleter = 0;
 	
 
 	public CardPanel(boolean isAdmin__) {
@@ -95,6 +96,13 @@ public class CardPanel extends JPanel implements ActionListener {
 				caretPosition();
 				
 			}
+			
+			public void mouseReleased(MouseEvent e){
+				if(display.getSelectedText() != null){
+						deleter = display.getSelectedText().length();
+					}
+				
+			}
 	
 		});
 		buttonPanel.removeAll();
@@ -107,10 +115,12 @@ public class CardPanel extends JPanel implements ActionListener {
 		tipButton = new MenuButton("Tip", "13", this);
 		cardNumButton = new MenuButton("Card Number", "14", this);
 		cardExpButton = new MenuButton("Exp. Date", "15", this);
+		cvvButton = new MenuButton("CVV", "16", this);
 		tabPanel.add(tipButton);
 		tabPanel.add(cardNumButton);
 		tabPanel.add(cardExpButton);
-
+		tabPanel.add(cvvButton);
+		
 		one = new MenuButton("1", "1", this);
 		two = new MenuButton("2", "2", this);
 		thr = new MenuButton("3", "3", this);
@@ -196,6 +206,8 @@ public class CardPanel extends JPanel implements ActionListener {
 					response1 = new Response(4, four);
 
 					processXML(response1);
+
+				
 				} else {
 					if (firstLine.equalsIgnoreCase("OPEN")
 							&& validate(tabStrings[2], tabStrings[3])) {
@@ -210,6 +222,9 @@ public class CardPanel extends JPanel implements ActionListener {
 								tabStrings[0] };
 						response1 = new Response(1, one);
 						processXML(response1);
+
+						
+					
 					} else {
 						if (!validate(tabStrings[2], tabStrings[3])) {
 							display.setText("Expired Card");
@@ -233,11 +248,20 @@ public class CardPanel extends JPanel implements ActionListener {
 					current += check;
 				}
 				
-
+		    	if(deleter > 0){
+	    			
+		    		current = current.substring(0, current.length()-deleter);
+		    		deleter = 0;
+		    		cond = false;
+		    	}
 			    if(current.length() > 0 && cond){
-			    	current = current.substring(0, current.length()-1);
-					
+			    	
+
+				    	current = current.substring(0, current.length()-1);
+			    	
 			    }
+			    
+			    
 					/*if(check.matches("[0-9]")){
 						
 					
@@ -304,6 +328,8 @@ public class CardPanel extends JPanel implements ActionListener {
 			ProcessPanel.closeReceipt("PROGRESS");
 			System.out.println("HERE");
 			tabStrings = new String[] { "", "", "", "" };
+			display.setText("");
+			loaded = false;
 			SystemInit.setTransactionScreen();
 		} else {
 			String[] response = getText(response1.getResponse()).split("/");
@@ -313,9 +339,11 @@ public class CardPanel extends JPanel implements ActionListener {
 			// System.out.println(response1.getResponse());
 			// System.out.println(error);
 			String responsef = response[0];
-			if (response[1].equals("001007") || response[1].equals("003010")) {
-				responsef = response[0] + " Please redo the transaction.";
+			if(response.length > 1){
+				if (response[1].equals("001007") || response[1].equals("003010")) {
+					responsef = response[0] + " Please redo the transaction.";
 
+				}
 			}
 			display.setText("Rejected: " + responsef/*
 													 * + error.substring(
@@ -330,6 +358,9 @@ public class CardPanel extends JPanel implements ActionListener {
 			tabStrings[2] = "";
 			tabStrings[3] = "";
 			current = "";
+			timer.start();
+			reject = true;
+			retrn = false;
 			Tools.update(display);
 		}
 		return;
@@ -384,17 +415,31 @@ public class CardPanel extends JPanel implements ActionListener {
 		System.out.println(tabStrings[3]);
 		regex.close();
 		regex = new Scanner(swipe);
-
+		
 		// System.out.println("********* " + temp);
 		// temp = temp.substring(1, 5);
 		// System.out.println("********* " + temp);
 		// temp = temp.substring(2) + temp.subSequence(0, 2);
 
 		// System.out.println("********* " + temp);
+
 		temp.replace(0, temp.length(), regex.findInLine("11~.*\\|12"));
-		System.out.println(temp);
+		
 		tabStrings[2] = temp.substring(3, temp.length() - 3);
 		System.out.println(tabStrings[2]);
+		
+		regex.close();
+		
+		regex = new Scanner(swipe);
+	
+		if(regex.findInLine("23~.*\\|.{0,1}") != null){
+		temp.replace(0, temp.length(), regex.findInLine("23~.*\\|.{0,1}"));
+		tabStrings[4] = temp.substring(3, temp.length()-2);
+		}
+		System.out.println(temp);
+		
+
+		
 		regex.close();// %B4003000123456781^TEST/MPS^15121010000000000?;4003000123456781=15125025432198712345?
 	}
 
@@ -605,6 +650,9 @@ public class CardPanel extends JPanel implements ActionListener {
 							tabStrings[2] = "";
 							tabStrings[3] = "";
 							current = "";
+							timer.start();
+							reject = true;
+							retrn = false;
 							Tools.update(display);
 						}
 						return;
@@ -746,6 +794,7 @@ public class CardPanel extends JPanel implements ActionListener {
 		}
 		if (command == 100) {
 			retrn = true;
+			DisplayFocus(true);
 		}
 		
 
@@ -1082,6 +1131,9 @@ public class CardPanel extends JPanel implements ActionListener {
 				return toReturn + "/" + temp;
 			} else if (lines[i].equals("Timeout")) {
 				return "Client Timeout. Please check the Internet Connection.";
+			}
+			else if(lines[i].equals("Timeout2")){
+				return "Please Try Again.";
 			}
 		}
 
