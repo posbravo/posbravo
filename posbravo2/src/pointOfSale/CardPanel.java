@@ -35,12 +35,15 @@ public class CardPanel extends JPanel implements ActionListener {
 			"Expiration Date (MMYY): ", "CVV: "};
 
 	private static JPanel tabPanel = new JPanel(new GridLayout(1, 4));
+	private static JPanel optionPanel = new JPanel(new GridLayout(3, 1));
+			
 	private static JTextField display = new JTextField("", 20);
 
 	private static JPanel buttonPanel = new JPanel(new GridLayout(4, 3));
 	private static JPanel bottomPanel = new JPanel(new GridLayout(1, 3));
+	
 	private static MenuButton tipButton = null, cardNumButton = null,
-			cardExpButton = null, cvvButton = null;
+			cardExpButton = null, cvvButton = null, zipButton = null, addrButton = null;
 	private static String tabStrings[] = { "", "", "", "", "" };
 	private static String current = "";
 	private static int selection = 0;
@@ -115,12 +118,20 @@ public class CardPanel extends JPanel implements ActionListener {
 		tipButton = new MenuButton("Tip", "13", this);
 		cardNumButton = new MenuButton("Card Number", "14", this);
 		cardExpButton = new MenuButton("Exp. Date", "15", this);
+		
 		cvvButton = new MenuButton("CVV", "16", this);
+		zipButton = new MenuButton("ZipCode", "17", this);
+		addrButton = new MenuButton("Address", "18", this);
+
+		optionPanel.add(cvvButton);
+		optionPanel.add(zipButton);
+		optionPanel.add(addrButton);
+		
 		tabPanel.add(tipButton);
 		tabPanel.add(cardNumButton);
 		tabPanel.add(cardExpButton);
-		tabPanel.add(cvvButton);
-		
+		tabPanel.add(optionPanel);
+				
 		one = new MenuButton("1", "1", this);
 		two = new MenuButton("2", "2", this);
 		thr = new MenuButton("3", "3", this);
@@ -196,7 +207,7 @@ public class CardPanel extends JPanel implements ActionListener {
            
 			if (e.getKeyChar() == '\n') {
 				// switch for generics or encrypted mag reader
-
+				
 				String readerType = checkReader(swipe, response1);
 				swipe = "";
 				if (readerType.equals("IPAD100KB")) { 	
@@ -320,6 +331,7 @@ public class CardPanel extends JPanel implements ActionListener {
 				System.out.println(current);}
 			}
 		}
+	  
 	}
 
 	private void processXML(Response response1) {

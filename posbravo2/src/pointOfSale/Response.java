@@ -230,9 +230,9 @@ public class Response{
 		temp += "</TranType>\n\t\t<TranCode>";
 		temp += tranCode;
 		temp += "</TranCode>\n\t\t<InvoiceNo>";
-		temp += "28";//invoiceNo;
+		temp += "38";//invoiceNo;
 		temp += "</InvoiceNo>\n\t\t<RefNo>";
-		temp += "28";//refNo;
+		temp += "38";//refNo;
 		temp += "</RefNo>\n\t\t<Memo>";
 		temp += memo;
 		temp += "</Memo>\n\t\t<PartialAuth>";
