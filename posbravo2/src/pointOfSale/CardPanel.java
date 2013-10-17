@@ -266,15 +266,15 @@ public class CardPanel extends JPanel implements ActionListener {
 		    		deleter = 0;
 		    		cond = false;
 		    	}
-				System.out.println("aaaaaaa");
 				if(check.matches("[0-9]")){
 					
 					current += check;
 					
 				}
 				else if(selection == 5){
+					if(!cond){
 					current += check;
-					
+					}
 				}
 				
 		    	
