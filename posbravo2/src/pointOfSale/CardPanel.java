@@ -257,12 +257,16 @@ public class CardPanel extends JPanel implements ActionListener {
 				
 				if(deleter > 0){
 		    		
-		    		
+		    		if(deleter > current.length()){
+		    			display.setText(tabText[selection]);
+		    			deleter = deleter - tabText[selection].length();
+		    		}
 		    		current = current.substring(0, current.length()- deleter);
-		    		System.out.print("current = " + current + " deleter = " + deleter );
+		    		System.out.print("current = s" + current + "deleter = " + deleter );
 		    		deleter = 0;
 		    		cond = false;
 		    	}
+				System.out.println("aaaaaaa");
 				if(check.matches("[0-9]")){
 					
 					current += check;
