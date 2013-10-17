@@ -32,7 +32,7 @@ public class CardPanel extends JPanel implements ActionListener {
 	private static final String RECEIPT_PATH = "Files/Receipts";
 	private static final String RECEIPT_LIST = RECEIPT_PATH + "/ReceiptList";
 	private static final String[] tabText = { "", "Tip: ", "Card Number: ",
-			"Expiration Date (MMYY): ", "CVV: "};
+			"Expiration Date (MMYY): ", "CVV: ", "Address: ", "Zipcode: "};
 
 	private static JPanel tabPanel = new JPanel(new GridLayout(1, 4));
 	private static JPanel optionPanel = new JPanel(new GridLayout(3, 1));
@@ -44,7 +44,7 @@ public class CardPanel extends JPanel implements ActionListener {
 	
 	private static MenuButton tipButton = null, cardNumButton = null,
 			cardExpButton = null, cvvButton = null, zipButton = null, addrButton = null;
-	private static String tabStrings[] = { "", "", "", "", "" };
+	private static String tabStrings[] = { "", "", "", "", "", "", "" };
 	private static String current = "";
 	private static int selection = 0;
 	private static File receiptSave = null;
@@ -119,9 +119,9 @@ public class CardPanel extends JPanel implements ActionListener {
 		cardNumButton = new MenuButton("Card Number", "14", this);
 		cardExpButton = new MenuButton("Exp. Date", "15", this);
 		
-		cvvButton = new MenuButton("CVV", "16", this);
-		zipButton = new MenuButton("ZipCode", "17", this);
-		addrButton = new MenuButton("Address", "18", this);
+		cvvButton = new MenuButton("CVV", "18", this);
+		addrButton = new MenuButton("Address", "19", this);
+		zipButton = new MenuButton("ZipCode", "20", this);
 
 		optionPanel.add(cvvButton);
 		optionPanel.add(zipButton);
@@ -254,17 +254,26 @@ public class CardPanel extends JPanel implements ActionListener {
 				
 				System.out.println(check);
 				swipe += check;
-				if(check.matches("[0-9]")){
-					
-					current += check;
-				}
 				
-		    	if(deleter > 0){
-	    			
-		    		current = current.substring(0, current.length()-deleter);
+				if(deleter > 0){
+		    		
+		    		
+		    		current = current.substring(0, current.length()- deleter);
+		    		System.out.print("current = " + current + " deleter = " + deleter );
 		    		deleter = 0;
 		    		cond = false;
 		    	}
+				if(check.matches("[0-9]")){
+					
+					current += check;
+					
+				}
+				else if(selection == 5){
+					current += check;
+					
+				}
+				
+		    	
 			    if(current.length() > 0 && cond){
 			    	
 
@@ -469,6 +478,9 @@ public class CardPanel extends JPanel implements ActionListener {
 
 			cardNumButton.setVisible(!tipButton.isVisible());
 			cardExpButton.setVisible(!tipButton.isVisible());
+			zipButton.setVisible(!tipButton.isVisible());
+			cvvButton.setVisible(!tipButton.isVisible());
+			addrButton.setVisible(!tipButton.isVisible());
 
 			while (reader.hasNextLine()) {
 				read = reader.nextLine();
@@ -627,14 +639,14 @@ public class CardPanel extends JPanel implements ActionListener {
 						String[] one = { getInvoiceNo() + "",
 								getInvoiceNo() + "", "POS BRAVO v1.0",
 								tabStrings[2], tabStrings[3], tabStrings[0],
-								tabStrings[0] };
+								tabStrings[0], tabStrings[4], tabStrings[5], tabStrings[6] };
 						response1 = new Response(1, one);
 						saveTransaction(response1.getXML(),
 								response1.getResponse(), 1);
 						if (response1.getResponse().contains("Approved")) {
 							ProcessPanel.closeReceipt("PROGRESS");
 							System.out.println("HERE");
-							tabStrings = new String[] { "", "", "", "" };
+							tabStrings = new String[] { "", "", "", "", "", "", "" };
 							display.setText("");
 							loaded = false;
 							SystemInit.setTransactionScreen();
@@ -661,6 +673,9 @@ public class CardPanel extends JPanel implements ActionListener {
 							// regex.close();
 							tabStrings[2] = "";
 							tabStrings[3] = "";
+							tabStrings[4] = "";
+							tabStrings[5] = "";
+							tabStrings[6] = "";
 							current = "";
 							timer.start();
 							reject = true;
@@ -792,7 +807,26 @@ public class CardPanel extends JPanel implements ActionListener {
 						current = "";
 						Tools.update(display);
 					}
+					break;
 				}
+			case 18:
+				DisplayFocus(true);
+				tabStrings[selection] = current;
+				selection = 4;
+				current = tabStrings[selection];
+				break;
+			case 19:
+				DisplayFocus(true);
+				tabStrings[selection] = current;
+				selection = 5;
+				current = tabStrings[selection];
+				break;
+			case 20:
+				DisplayFocus(true);
+				tabStrings[selection] = current;
+				selection = 6;
+				current = tabStrings[selection];
+				break;
 			}
 		}
 		// for keyboard input you will have to parse the text in display when
@@ -1221,8 +1255,14 @@ public class CardPanel extends JPanel implements ActionListener {
 		swipe = "";
 		tabStrings[2] = "";
 		tabStrings[3] = "";
+		tabStrings[4] = "";
+		tabStrings[5] = "";
+		tabStrings[6] = "";
 		tabText[2] = "Card Number: ";
 		tabText[3] = "Expiration Date (MMYY): ";
+		tabText[4] = "CVV: ";
+		tabText[5] = "Address: ";
+		tabText[6] = "Zipcode: ";
 		digErr = false;
 		reset = false;
 		luhnErr = false;

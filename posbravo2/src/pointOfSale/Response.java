@@ -20,7 +20,7 @@ public class Response{
 	
 	private final String webURL = "https://w1.mercurydev.net/ws/ws.asmx";
 	private int type, timeout;
-	private static String merchantID /*"023358150511666""395347306=TOKEN"*/  ,tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
+	private static String merchantID /*"023358150511666""395347306=TOKEN"*/  , cvv, addr, zip, tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
 	private static String password /*= "123TOKEN"*/;
 	private String result = "", response = "";
 	
@@ -45,6 +45,9 @@ public class Response{
 			purchase = data[5];
 			authorize = data[6];
 			gratuity = "0.0";
+			cvv = data[7];
+			addr = data[8];
+			zip = data[9];
 			result = getResult1();
 			break;
 		case 2: tranCode = "PreAuthCaptureByRecordNo";
@@ -149,7 +152,11 @@ public class Response{
 		temp += purchase;
 		temp += "</Purchase>\n\t\t\t<Authorize>";
 		temp += authorize;
-		temp += "</Authorize>\n\t\t</Amount>\n\t</Transaction>\n</TStream>";
+		temp += "</Authorize>\n\t\t</Amount>";
+		temp += "\n\t\t<CVVData>" + cvv + "</CVVData>";
+		temp += "\n\t<AVS>\n\t\t<Address>" + addr + "</Address>";
+		temp += "\n\t\t<Zip>" + zip + "</Zip>\n\t</AVS>";
+		temp+= "\n\t</Transaction>\n</TStream>";
 		
 		return temp;
 	}
