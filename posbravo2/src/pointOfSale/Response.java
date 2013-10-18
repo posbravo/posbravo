@@ -73,7 +73,8 @@ public class Response{
 			authCode = data[7];
 			result = getResult3();
 			break;
-			//case for encrypted reader
+			
+		//case for encrypted reader
 		case 4:
 			tranCode = "PreAuth";
 			invoiceNo = data[0];
@@ -86,7 +87,37 @@ public class Response{
 			authorize = data[6];
 			gratuity = "0.0";
 			result = getResult4();
-		break;		}
+		break;
+		
+		//standard voidsale
+		case 5: tranCode = "VoidSaleByRecordNo";
+	    setIDnPas(data[8]);
+		invoiceNo = data[0];
+		refNo = data[1];
+		memo = data[2];
+		recordNo = data[3];
+		purchase = data[4];
+		acqRefData = data[5];
+		processData = data[6];
+		authCode = data[7];
+		result = getResult5();
+		break;
+		
+		case 6: tranCode = "Sale";
+		invoiceNo = data[0];
+		refNo = data[1];
+		memo = data[2];
+		recordNo = "RecordNumberRequested";
+		accountNum = data[3];
+		expDate = data[4];
+		purchase = data[5];
+		authorize = data[6];
+		cvv = data[7];
+		addr = data[8];
+		zip = data[9];
+		result = getResult6();
+		break;
+		}
 		System.out.println(password);
 		//System.out.println(result);
 		send();
@@ -266,6 +297,74 @@ public class Response{
 		
 		return temp;
 	}
+
+	private String getResult5()
+	{
+		String temp = "";
+		temp += "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";
+		temp += merchantID;
+		temp += "</MerchantID>\n\t\t<TranType>";
+		temp += tranType;
+		temp += "</TranType>\n\t\t<TranCode>";
+		temp += tranCode;
+		temp += "</TranCode>\n\t\t<InvoiceNo>";
+		temp += invoiceNo;
+		temp += "</InvoiceNo>\n\t\t<RefNo>";
+		temp += refNo;
+		temp += "</RefNo>\n\t\t<Memo>";
+		temp += memo;
+		temp += "</Memo>\n\t\t<RecordNo>";
+		temp += recordNo;
+		temp += "</RecordNo>\n\t\t<Frequency>";
+		temp += frequency;
+		temp += "</Frequency>\n\t\t<Amount>\n\t\t\t<Purchase>";
+		temp += purchase;
+		temp += "</Purchase>\n\t\t</Amount>\n\t\t\t<AuthCode>";
+		temp += authCode;
+		temp += "</AuthCode>\n\t</Transaction>\n</TStream>";
+		
+		return temp;
+	}
+	
+	private String getResult6()
+	{
+		String temp = "";
+		temp += "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";
+		temp += merchantID;
+		temp += "</MerchantID>\n\t\t<TranType>";
+		temp += tranType;
+		temp += "</TranType>\n\t\t<TranCode>";
+		temp += tranCode;
+		temp += "</TranCode>\n\t\t<InvoiceNo>";
+		temp += invoiceNo;
+		temp += "</InvoiceNo>\n\t\t<RefNo>";
+		temp += refNo;
+		temp += "</RefNo>\n\t\t<Memo>";
+		temp += memo;
+		temp += "</Memo>\n\t\t<Frequency>";
+		temp += frequency;
+		temp += "</Frequency>\n\t\t<RecordNo>";
+		temp += recordNo;
+		temp += "</RecordNo>\n\t\t<PartialAuth>";
+		temp += partialAuth;
+		temp += "</PartialAuth>\n\t\t<Account>\n\t\t\t<AcctNo>";
+		temp += accountNum;
+		temp += "</AcctNo>\n\t\t\t<ExpDate>";
+		temp += expDate;
+		temp += "</ExpDate>\n\t\t</Account>\n\t\t<Amount>\n\t\t\t<Purchase>";
+		temp += purchase;
+		temp += "</Purchase>\n\t\t\t<Authorize>";
+		temp += authorize;
+		temp += "</Authorize>\n\t\t</Amount>";
+		temp += "\n\t\t<CVVData>" + cvv + "</CVVData>";
+		temp += "\n\t<AVS>\n\t\t<Address>" + addr + "</Address>";
+		temp += "\n\t\t<Zip>" + zip + "</Zip>\n\t</AVS>";
+		temp+= "\n\t</Transaction>\n</TStream>";
+		
+		return temp;
+	}
+	
+	
 	
 	public void send()
 	{

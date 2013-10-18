@@ -1038,11 +1038,11 @@ public class CardPanel extends JPanel implements ActionListener {
 	}
 
 	private static String[] num3() {
-		return num3(receiptSave);
+		return num3(receiptSave, false);
 	}
 
 	// changed to Static
-	protected static String[] num3(File receiptSaveTemp) {
+	protected static String[] num3(File receiptSaveTemp, boolean voidSale) {
 		String toReturn[] = new String[9];
 
 		String file1 = "Files/Transaction/", file2 = "/"
@@ -1050,6 +1050,8 @@ public class CardPanel extends JPanel implements ActionListener {
 		Scanner reader = null;
 		Scanner regex = null;
 
+
+		
 		try {
 			reader = new Scanner(new File(file1 + "Sent/1" + file2));
 		} catch (FileNotFoundException e) {
@@ -1167,6 +1169,24 @@ public class CardPanel extends JPanel implements ActionListener {
 		}
 		reader.close();
 
+		if(voidSale){
+			try {
+				reader = new Scanner(new File(file1 + "Response/2" + file2));
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			}
+			while (reader.hasNextLine()) {
+				String read = reader.nextLine();
+				regex = new Scanner(read);
+				if (read.contains("RefNo")) {
+					toReturn[1] = regex.findInLine("<RefNo>[\\da-zA-Z]*</RefNo>");
+					toReturn[1] = toReturn[1].substring("<RefNo>".length(),
+							toReturn[1].length() - "</RefNo>".length());
+				}
+			}
+		}
+		reader.close();
+		
 		return toReturn;
 	}
 
