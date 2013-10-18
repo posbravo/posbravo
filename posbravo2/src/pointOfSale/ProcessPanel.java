@@ -16,6 +16,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -153,10 +154,18 @@ public class ProcessPanel extends JPanel implements ActionListener {
 
 		if (event.getActionCommand().equals("Load") && receiptList.getSelectedIndex() > -1)
 		{
+			CardPanel.setLoaded(true);
 			CardPanel.reset();
 			CardPanel.DisplayFocus(true);
 			ReceiptPanel.loadReceipt(receiptList.getSelectedValue());
 			CardPanel.loadReciept(new File(RECEIPT_PATH + "/" + receiptList.getSelectedValue()));
+			if(!CardPanel.tipVisible()){
+				CardPanel.setLimiter(false);
+			}
+			else{
+				CardPanel.setLimiter(true);
+			}
+			
 		}
 		if (event.getActionCommand().equals("Delete") && receiptList.getSelectedIndex() > -1)
 			deleteReceipt();
@@ -167,11 +176,12 @@ public class ProcessPanel extends JPanel implements ActionListener {
 		}
 		if (event.getActionCommand().equals("Card") && receiptList.getSelectedIndex() > -1)
 			closeReceipt("CARD");
-		if (event.getActionCommand().equals("Back"))
+		if (event.getActionCommand().equals("Back")){
 			SystemInit.setTransactionScreen();
 		    CardPanel.clearDisplay();
 		    CardPanel.setLoaded(false);
 		    CardPanel.timerCheck();
+		}
 	}
 
 	private void deleteReceipt() {

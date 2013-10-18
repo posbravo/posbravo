@@ -62,6 +62,7 @@ public class Response{
 			result = getResult2();
 			break;
 		case 3: tranCode = "VoidSaleByRecordNo";
+		    setIDnPas(data[8]);
 			invoiceNo = data[0];
 			refNo = data[1];
 			memo = data[2];
@@ -119,6 +120,7 @@ public class Response{
 		this.frequency = properties.getProperty("frequency");
 		this.partialAuth = properties.getProperty("partialAuth");
 		this.timeout = Integer.parseInt(properties.getProperty("timeout"));
+	
 	}
 	 
 	 //<?xml version="1.0"?> <TStream>  <Transaction>   <MerchantID>395347308=E2ETKN</MerchantID>   <TranType>Credit</TranType>   <TranCode>PreAuth</TranCode>   <InvoiceNo>16</InvoiceNo>   <RefNo>16</RefNo> //use RefNo=InvoiceNo on PreAuth requests   <Memo>MPS Example XML v1.0</Memo>         <PartialAuth>Allow</PartialAuth> //Required to "Allow" partial approvals   <Frequency>OneTime</Frequency> //use to request a Token for "one time" use(6 months)   <RecordNo>RecordNumberRequested</RecordNo>   <Account> //use for encrypted data elements in place of Track1 or Track2    <EncryptedFormat>MagneSafe</EncryptedFormat>   <AccountSource>Swiped</AccountSource>   <EncryptedBlock>F40DDBA1F645CC8DB85A6459D45AFF8002C244A0F74402B479 ABC9915EC9567C81BE99CE4483AF3D</EncryptedBlock> //for E2E (P2PE), always use Track2 block <EncryptedKey>9012090B01C4F200002B</EncryptedKey>  </Account>   <Amount>    <Purchase>2.00</Purchase> //Purchase=Authorize on request    <Authorize>2.00</Authorize>   </Amount>  </Transaction> </TStream> 
@@ -237,9 +239,9 @@ public class Response{
 		temp += "</TranType>\n\t\t<TranCode>";
 		temp += tranCode;
 		temp += "</TranCode>\n\t\t<InvoiceNo>";
-		temp += "38";//invoiceNo;
+		temp += invoiceNo;//"38";
 		temp += "</InvoiceNo>\n\t\t<RefNo>";
-		temp += "38";//refNo;
+		temp += refNo;//"38";
 		temp += "</RefNo>\n\t\t<Memo>";
 		temp += memo;
 		temp += "</Memo>\n\t\t<PartialAuth>";
@@ -295,6 +297,14 @@ public class Response{
 	}
 	public void setIDnPas(String id){
 		initProperties();
+		//for voidsale, reference appropriate ids based on merchantID on the sent receipt 
+		if(id.equals("395347306=TOKEN")){
+			id = "merchantID1";
+		}
+		else if(id.equals("395347308=E2ETKN")){
+			id = "merchantID2";
+		}
+		
 		this.merchantID = properties.getProperty(id);
 		System.out.println(merchantID);
 		String temp = id.substring(id.length()-1);
@@ -302,6 +312,7 @@ public class Response{
 		temp = "password" + temp;
 		this.password = properties.getProperty(temp);
 		System.out.println(password);
+		
 	}
 	public String getResponse() {
 		return this.response;

@@ -1,6 +1,7 @@
 package pointOfSale;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +18,8 @@ import java.util.Date;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
@@ -35,7 +38,7 @@ public class CardPanel extends JPanel implements ActionListener {
 			"Expiration Date (MMYY): ", "CVV: ", "Address: ", "Zipcode: "};
 
 	private static JPanel tabPanel = new JPanel(new GridLayout(1, 4));
-	private static JPanel optionPanel = new JPanel(new GridLayout(3, 1));
+	private static JPanel optionPanel = new JPanel(new GridLayout(1, 3));
 			
 	private static JTextField display = new JTextField("", 20);
 
@@ -84,6 +87,7 @@ public class CardPanel extends JPanel implements ActionListener {
 		isAdmin = isAdmin__;
 		tabPanel.removeAll();
 		display.removeAll();
+		optionPanel.removeAll();
 		display.removeKeyListener(listen);
 		listen = new KeyBarsListener();
 		display.addKeyListener(listen);
@@ -104,6 +108,9 @@ public class CardPanel extends JPanel implements ActionListener {
 				if(display.getSelectedText() != null){
 						deleter = display.getSelectedText().length();
 					}
+				else{
+					deleter = 0;
+				}
 				
 			}
 	
@@ -183,14 +190,21 @@ public class CardPanel extends JPanel implements ActionListener {
 			Scanner s = new Scanner(display.getText());
 			s.useDelimiter(": ");
 			String temp = "";
+			//String first = s.next();
+			//s.close();
+			//s = new Scanner(display.getText());
 			while(s.hasNext()){
 				temp = s.next();
 				
 			}
-				
+	        /*if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE && first != null && deleter > current.length()){
+	        	display.setText(first + ":  ");
+	        	deleter = 0;
+	        }*/
 			if( e.getKeyCode() == KeyEvent.VK_BACK_SPACE && (temp.matches("Card Number") || 
-					temp.matches("Tip") || temp.matches("Expiration Date (MMYY)"))){
+					temp.matches("Tip") || temp.matches("Expiration Date (MMYY)") || temp.matches("CVV") || temp.matches("Address") || temp.matches("Zipcode"))){
 				display.setText(temp + ":  ");
+				
 			}
 			s.close();
 		}
@@ -201,10 +215,24 @@ public class CardPanel extends JPanel implements ActionListener {
 				display.setText(d.substring(0, d.length()-1));
 				backspace = false;
 			}
+			if(deleter > 0){
+				if(tipButton.isVisible()){
+					tabStrings[selection] = ".00";
+					current = ".00";
+					display.setText(tabText[selection] + tabStrings[selection]);
+					counter = 2;
+					deleter = 0;
+					
+				}
+				
+			
+				
+			}
+			
 		}
 		public void keyTyped(KeyEvent e) {
 			Response response1 = null;
-           
+
 			if (e.getKeyChar() == '\n') {
 				// switch for generics or encrypted mag reader
 				
@@ -213,7 +241,7 @@ public class CardPanel extends JPanel implements ActionListener {
 				if (readerType.equals("IPAD100KB")) { 	
 					String[] four = { getInvoiceNo() + "", getInvoiceNo() + "",
 							"POS BRAVO v1.0", tabStrings[2], tabStrings[3],
-							tabStrings[0], tabStrings[0] };
+							tabStrings[0], tabStrings[0], tabStrings[4], tabStrings[5], tabStrings[6] };
 					response1 = new Response(4, four);
 
 					processXML(response1);
@@ -230,7 +258,7 @@ public class CardPanel extends JPanel implements ActionListener {
 						String[] one = { getInvoiceNo() + "",
 								getInvoiceNo() + "", "POS BRAVO v1.0",
 								tabStrings[2], tabStrings[3], tabStrings[0],
-								tabStrings[0] };
+								tabStrings[0], tabStrings[4], tabStrings[5], tabStrings[6] };
 						response1 = new Response(1, one);
 						processXML(response1);
 
@@ -239,10 +267,17 @@ public class CardPanel extends JPanel implements ActionListener {
 					} else {
 						if (!validate(tabStrings[2], tabStrings[3])) {
 							display.setText("Expired Card");
+							reject = true;
+							timer.start();
+						
 						}
 
 						else if (!firstLine.equalsIgnoreCase("OPEN")) {
 							display.setText("Closed Ticket");
+							reject = true;
+							timer.start();
+							
+					
 						}
 					}
 					// System.out.println(tabStrings[2]);
@@ -272,7 +307,7 @@ public class CardPanel extends JPanel implements ActionListener {
 					
 				}
 				else if(selection == 5){
-					if(!cond){
+					if(!(e.getKeyChar() == KeyEvent.VK_BACK_SPACE)){
 					current += check;
 					}
 				}
@@ -299,6 +334,11 @@ public class CardPanel extends JPanel implements ActionListener {
 			}
 			//backspace = true;
 				else{
+					if(deleter > 0){
+
+						return;
+					}
+					
 				    Scanner run = new Scanner(display.getText() + " ");
 				    run.useDelimiter(": ");
 				    String temp = "";
@@ -352,7 +392,7 @@ public class CardPanel extends JPanel implements ActionListener {
 		if (response1.getResponse().contains("Approved")) {
 			ProcessPanel.closeReceipt("PROGRESS");
 			System.out.println("HERE");
-			tabStrings = new String[] { "", "", "", "" };
+			tabStrings = new String[] { "", "", "", "", "", "", "" };
 			display.setText("");
 			loaded = false;
 			SystemInit.setTransactionScreen();
@@ -470,6 +510,7 @@ public class CardPanel extends JPanel implements ActionListener {
 
 	public static void loadReciept(File receipt) {
 		// tabStrings = new String[] { "", "", "", "" };
+		
 		receiptSave = receipt;
 		Scanner reader = null;
 		Scanner regex = null;
@@ -505,7 +546,6 @@ public class CardPanel extends JPanel implements ActionListener {
 		current = tabStrings[selection];
 
 		display.setText(tabText[selection] + tabStrings[selection]);
-	
 		Tools.update(display);
 		//appendHint()
 	}
@@ -595,6 +635,7 @@ public class CardPanel extends JPanel implements ActionListener {
 			// current = tabStrings[selection];
 			// break;
 			case 13:
+				DisplayFocus(true);
 				tabStrings[selection] = current;
 				selection = 1;
 				current = tabStrings[selection];
@@ -730,7 +771,7 @@ public class CardPanel extends JPanel implements ActionListener {
 					if (response2.getResponse().contains("Approved")) {
 						updateTip(tabStrings[1]);
 						ProcessPanel.closeReceipt("SWIPED");
-						tabStrings = new String[] { "", "", "", "" };
+						tabStrings = new String[] { "", "", "", "", "", "", "" };
 						display.setText("Transaction Complete");
 						loaded = false;
 						SystemInit.setTransactionScreen();
@@ -751,10 +792,13 @@ public class CardPanel extends JPanel implements ActionListener {
 																 * .length())
 																 */);
 						// regex.close();
-
+						tabStrings[1] = ".00";
 						tabStrings[2] = "";
 						tabStrings[3] = "";
-						current = "";
+						tabStrings[4] = "";
+						tabStrings[5] = "";
+						tabStrings[6] = "";
+						current = ".00";
 						counter = 0;
 						limiter = false;
 						Tools.update(display);
@@ -784,8 +828,11 @@ public class CardPanel extends JPanel implements ActionListener {
 							response3.getResponse(), 3);
 					if (response3.getResponse().contains("Approved")) {
 						ProcessPanel.closeReceipt("VOIDED");
-						tabStrings = new String[] { "", "", "", "" };
+						tabStrings = new String[] { "", "", "", "", "", "", "" };
+						display.setText("Voided");
+						loaded = false;
 						SystemInit.setTransactionScreen();
+						
 					} else {
 						String response = getText(response3.getResponse());
 						// Scanner regex = new Scanner(response3.getResponse());
@@ -806,13 +853,15 @@ public class CardPanel extends JPanel implements ActionListener {
 																	 * length())
 																	 */);
 						// regex.close();
+						
 						tabStrings[2] = "";
 						tabStrings[3] = "";
 						current = "";
 						Tools.update(display);
 					}
-					break;
+					return;
 				}
+				break;
 			case 18:
 				DisplayFocus(true);
 				tabStrings[selection] = current;
@@ -994,7 +1043,7 @@ public class CardPanel extends JPanel implements ActionListener {
 
 	// changed to Static
 	protected static String[] num3(File receiptSaveTemp) {
-		String toReturn[] = new String[8];
+		String toReturn[] = new String[9];
 
 		String file1 = "Files/Transaction/", file2 = "/"
 				+ receiptSaveTemp.getName() + ".xml";
@@ -1015,7 +1064,18 @@ public class CardPanel extends JPanel implements ActionListener {
 		while (reader.hasNextLine()) {
 			String read = reader.nextLine();
 			regex = new Scanner(read);
-			if (read.contains("InvoiceNo")) {
+			if (read.contains("MerchantID")) {
+				toReturn[8] = regex
+						.findInLine("<MerchantID>[\\da-zA-Z =]+</MerchantID>");
+				toReturn[8] = toReturn[8].substring("<MerchantID>".length(),
+						toReturn[8].length() - "</MerchantID>".length());
+				Pattern p = Pattern.compile("[\\da-zA-z=]+");
+				Matcher m = p.matcher(toReturn[8]);
+			    m.find();
+			    toReturn[8] = m.group();
+				
+			}
+			else if (read.contains("InvoiceNo")) {
 				toReturn[0] = regex
 						.findInLine("<InvoiceNo>[\\da-zA-Z]*</InvoiceNo>");
 				toReturn[0] = toReturn[0].substring("<InvoiceNo>".length(),
@@ -1271,8 +1331,10 @@ public class CardPanel extends JPanel implements ActionListener {
 		reset = false;
 		luhnErr = false;
 		counter = 2;
-		if(timer.isRunning()){
-			timer.stop();
+		if(timer != null){
+			if(timer.isRunning()){
+				timer.stop();
+			}
 		}
 	}
 
@@ -1287,8 +1349,10 @@ public class CardPanel extends JPanel implements ActionListener {
 		return tipButton.isVisible();
 	}
 	public static void timerCheck(){
-		if(timer.isRunning()){
-			timer.stop();
+		if(timer != null){
+			if(timer.isRunning()){
+				timer.stop();
+			}
 		}
 	}
 	public static void clearDisplay() {
