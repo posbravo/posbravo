@@ -1043,7 +1043,7 @@ public class CardPanel extends JPanel implements ActionListener {
 
 	// changed to Static
 	protected static String[] num3(File receiptSaveTemp, boolean voidSale) {
-		String toReturn[] = new String[9];
+		String toReturn[] = new String[10];
 
 		String file1 = "Files/Transaction/", file2 = "/"
 				+ receiptSaveTemp.getName() + ".xml";
@@ -1092,6 +1092,7 @@ public class CardPanel extends JPanel implements ActionListener {
 						.findInLine("<Purchase>[\\d\\.]*</Purchase>");
 				toReturn[4] = toReturn[4].substring("<Purchase>".length(),
 						toReturn[4].length() - "</Purchase>".length());
+		
 			} else if (read.contains("Memo")) {
 				toReturn[2] = regex.findInLine("<Memo>[\\da-zA-Z \\.]*</Memo>");
 				toReturn[2] = toReturn[2].substring("<Memo>".length(),

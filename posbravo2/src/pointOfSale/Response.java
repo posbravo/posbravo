@@ -117,6 +117,21 @@ public class Response{
 		zip = data[9];
 		result = getResult6();
 		break;
+		
+		case 7: tranCode = "AdjustByRecordNo";
+		setIDnPas(data[8]);
+		invoiceNo = data[0];
+		refNo = data[1];
+		memo = data[2];
+		recordNo = data[3];
+		purchase = data[4];
+		//acqRefData = data[5];
+		//processData = data[6];
+		authCode = data[7];
+		authorize = data[9];
+		gratuity = data[10];
+		result = getResult7();
+		break;
 		}
 		System.out.println(password);
 		//System.out.println(result);
@@ -364,7 +379,36 @@ public class Response{
 		return temp;
 	}
 	
-	
+	private String getResult7()
+	{
+		String temp = "";
+		temp += "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";
+		temp += merchantID;
+		temp += "</MerchantID>\n\t\t<TranType>";
+		temp += tranType;
+		temp += "</TranType>\n\t\t<TranCode>";
+		temp += tranCode;
+		temp += "</TranCode>\n\t\t<InvoiceNo>";
+		temp += invoiceNo;
+		temp += "</InvoiceNo>\n\t\t<RefNo>";
+		temp += refNo;
+		temp += "</RefNo>\n\t\t<Memo>";
+		temp += memo;
+		temp += "</Memo>\n\t\t<RecordNo>";
+		temp += recordNo;
+		temp += "</RecordNo>\n\t\t<Frequency>";
+		temp += frequency;
+		temp += "</Frequency>\n\t\t<Amount>\n\t\t\t<Purchase>";
+		temp += purchase;
+		temp += "</Purchase>\n\t\t\t<Authorize>";
+		temp += authorize;	
+		temp +=	"</Authorize>";
+		temp += "\n\t\t\t<Gratuity>" + gratuity + "</Gratuity>";		
+        temp += "\n\t\t</Amount>";
+		temp += "\n\t\t\t<AuthCode>" + authCode + "</AuthCode>";
+		temp += "\n\t</Transaction>\n</TStream>";
+		return temp;
+	}
 	
 	public void send()
 	{
