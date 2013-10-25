@@ -145,6 +145,33 @@ public class ReceiptPanel extends JPanel
 		contentWriter.close();
 		clearReceipt();
 	}
+	public static void saveReceipt(String name)
+	{
+		PrintWriter listWriter = null;
+		PrintWriter contentWriter = null;
+		newReceipt = getTimeStamp();
+		if(name != null || (!name.equals(""))){
+			newReceipt = name;
+		}
+		try
+		{
+			listWriter = new PrintWriter(new FileOutputStream(RECEIPT_LIST_FILE, true));
+			contentWriter = new PrintWriter(RECEIPT_PATH + newReceipt);
+		}
+		catch(FileNotFoundException e)
+		{
+			JOptionPane.showMessageDialog(null,"File Not Found");
+		}
+		
+		contentWriter.println("OPEN");
+		listWriter.println(newReceipt);
+		for(int count=0; count < listModel.getSize(); count++)
+			contentWriter.println(listModel.elementAt(count));
+		
+		listWriter.close();
+		contentWriter.close();
+		clearReceipt();
+	}
 	/**
 	 * Loads items of the selected receipt from text file back into receipt list
 	 * @param receiptFile Text file to be loaded

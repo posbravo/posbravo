@@ -57,6 +57,7 @@ public class SystemInit extends JFrame
 	 */
 	public static void setLogInScreen()
 	{
+	
 		systemPanel.removeAll();
 		systemPanel.add(new LogInGUI());
 		Tools.update(systemPanel);

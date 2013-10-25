@@ -176,7 +176,9 @@ public class Response{
 		String temp = "";
 		temp += "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";
 		temp += merchantID;
-		temp += "</MerchantID>\n\t\t<TranType>";
+		temp += "</MerchantID>";
+		temp += "\n\t\t<OperatorID>test</OperatorID>";
+		temp += "\n\t\t<TranType>";
 		temp += tranType;
 		temp += "</TranType>\n\t\t<TranCode>";
 		temp += tranCode;

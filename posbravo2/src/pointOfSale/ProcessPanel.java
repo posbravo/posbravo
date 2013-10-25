@@ -213,6 +213,7 @@ public class ProcessPanel extends JPanel implements ActionListener {
 		SystemInit.setProcessScreen(isAdmin);
 	}
 
+
 	public static void closeReceipt(String title, File file) {
 //		File file = new File(RECEIPT_PATH + "/"
 //				+ receiptList.getSelectedValue());
@@ -236,6 +237,47 @@ public class ProcessPanel extends JPanel implements ActionListener {
 		}
 		try {
 			printer = new PrintWriter(file);
+			printer.println(toPrint);
+			printer.flush();
+			printer.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Error printing");
+		}
+
+		
+	}
+	public static void closeReceipt(String title, String purchase, String authorize) {
+		closeReceipt(title, new File(RECEIPT_PATH + "/"
+				+ receiptList.getSelectedValue()), purchase, authorize);
+		SystemInit.setProcessScreen(isAdmin);
+	}
+	public static void closeReceipt(String title, File file, String purchase, String authorize) {
+//		File file = new File(RECEIPT_PATH + "/"
+//				+ receiptList.getSelectedValue());
+		Scanner reader = null;
+		PrintWriter printer = null;
+		String toPrint = "";
+		try {
+			reader = new Scanner(file);
+			if(!title.equalsIgnoreCase("OPEN"))
+			{
+				reader.nextLine();
+			}
+			toPrint += title;
+			while (reader.hasNextLine()) {
+				toPrint += "\n" + reader.nextLine();
+				
+				
+			}
+			reader.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Error reading");
+			return;
+		}
+		try {
+			printer = new PrintWriter(file);
+			toPrint.replace(purchase, authorize);
+			System.out.println(toPrint);
 			printer.println(toPrint);
 			printer.flush();
 			printer.close();

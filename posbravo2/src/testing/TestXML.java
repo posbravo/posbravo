@@ -1,19 +1,35 @@
 package testing;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.DecimalFormat;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import pointOfSale.Response;
+import pointOfSale.*;
 
 public class TestXML {
 
 	public static void main(String[] args) {
-		
+		/*String checker [] = new String [9];
+		checker[3] = "22.26";
+		checker[8] = "30.25";
+		int purchase = Integer.valueOf(checker[8].replace(".", ""));
+		int authorize = Integer.valueOf(checker[3].replace(".", ""));
+		int subt = purchase - authorize;
+		//DecimalFormat df = new DecimalFormat("0.00");
+		ReceiptPanel.addItem(String.valueOf(subt), "Remaining Balance");
+		ReceiptPanel.saveReceipt();
+		if(true)return;
+		*/
+		Object retrn[] = new Object[]{true};
+		if((boolean)retrn[0] == true){
+			System.out.println("IT WORKS");
+			return;
+		}
 		String ref = "0";
-		String one[] = {"10", "10", "POS BRAVO v1.0", "4003000123456781", "1215", "1.05", "1.05", "", "", ""};
-		String two[] = {"10", "10", "ADl1bYRUI2Pi5H6WO1fOHANtuxLlwlnUIhESEAAjEAeDBA==", "1.05", "1.05", "1.00", "VI0105", "KfJ"};
+		String one[] = {"10", "10", "POS BRAVO v1.0", "4003000123456781", "1215", "1.05", "1.00", "", "", ""};
+		String two[] = {"10", "10", "ADl1bYRUI2Pi5H6WO1fOHANtuxLlwlnUIhESEAAjEAeDBA==", "1.05", "1.00", "", "VI0105", "KfJ"};
 		String three[] = {"10", "10", "POS BRAVO v1.0", "KqaoIkv1k9wUbUmJ9wmtTKFWZhyPMas0IhESEAAjEAeDBw==", "1.05", "KfJ", "|15|410100700000", "VI0105"};
 		String four[] = {"16", "16", "POS BRAVO v1.0", "9500030000081C20001A", "2B11F45ABEE6A6B288A76FED3BBCCE63130970C742BDD607D75F09821AAF2C6482F1AB593E0A97BA", "2.00", "2.00"};
 		//non encrypted cc 
@@ -58,7 +74,7 @@ public class TestXML {
 		System.out.println(test.getXML());
 		System.out.println(test.getResponse());
 		
-		
+
 	}
 	public int getAuthcode(String xml) {
 		

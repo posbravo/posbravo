@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
@@ -63,6 +64,7 @@ public class CardPanel extends JPanel implements ActionListener {
 	private static boolean reject = false;
 	private static boolean loaded = false;
 	private static boolean backspace = false;
+	private static boolean voidsale = false;
 	private static String temp = "";
 
 	private static MenuButton one = null;
@@ -81,7 +83,6 @@ public class CardPanel extends JPanel implements ActionListener {
 	private static boolean limiter = true;
 	private static int counter = 2;
 	private static int deleter = 0;
-	
 
 	public CardPanel(boolean isAdmin__) {
 		isAdmin = isAdmin__;
@@ -289,19 +290,25 @@ public class CardPanel extends JPanel implements ActionListener {
 				
 				System.out.println(check);
 				swipe += check;
-				
 				if(deleter > 0){
-		    		
-		    		if(deleter > current.length()){
+		    		int temp = current.length();
+		    		System.out.println("deleter = " + deleter + " current = " + temp );
+		    		if(deleter > temp){
 		    			display.setText(tabText[selection]);
-		    			deleter = deleter - tabText[selection].length();
+		    			current = "";
+		    			//deleter = deleter - tabText[selection].length();
 		    		}
-		    		current = current.substring(0, current.length()- deleter);
+		    		else{
+		    			current = current.substring(0, temp - deleter);
+		    		}
 		    		System.out.print("current = s" + current + "deleter = " + deleter );
 		    		deleter = 0;
 		    		cond = false;
 		    	}
-				if(check.matches("[0-9]")){
+				if(!(e.getKeyChar() == KeyEvent.VK_BACK_SPACE)){
+					current += check;		
+				}
+				/*if(check.matches("[0-9]")){
 					
 					current += check;
 					
@@ -310,12 +317,13 @@ public class CardPanel extends JPanel implements ActionListener {
 					if(!(e.getKeyChar() == KeyEvent.VK_BACK_SPACE)){
 					current += check;
 					}
-				}
+				}*/
+			
 				
 		    	
 			    if(current.length() > 0 && cond){
 			    	
-
+			    	    
 				    	current = current.substring(0, current.length()-1);
 			    	
 			    }
@@ -356,7 +364,7 @@ public class CardPanel extends JPanel implements ActionListener {
 						System.out.println(current);
 					  }
 						return;
-					}
+					}	
 					if(counter < 2){
 						if(check.matches("[0-9.]")){
 							boolean condtem = check.equals(".");
@@ -688,12 +696,21 @@ public class CardPanel extends JPanel implements ActionListener {
 						response1 = new Response(1, one);
 						saveTransaction(response1.getXML(),
 								response1.getResponse(), 1);
+
 						if (response1.getResponse().contains("Approved")) {
-							ProcessPanel.closeReceipt("PROGRESS");
+							//ProcessPanel.closeReceipt("PROGRESS");
+							Object [] partial = checkForPartialApproval();
+							if((boolean)partial[0]){
+								ProcessPanel.closeReceipt("PROGRESS", (String)partial[1], (String)partial[2] );
+								Tools.update(display);
+								SystemInit.setProcessScreen(isAdmin);
+								return;
+							}
 							System.out.println("HERE");
 							tabStrings = new String[] { "", "", "", "", "", "", "" };
 							display.setText("");
 							loaded = false;
+							
 							SystemInit.setTransactionScreen();
 						} else {
 							String response = getText(response1.getResponse());
@@ -762,8 +779,9 @@ public class CardPanel extends JPanel implements ActionListener {
 					System.out.println("Done************");
 
 					String[] two = num2();
-					two[3] = tabStrings[0];
+					/*two[3] = tabStrings[0];
 					two[4] = tabStrings[0];
+					*/
 					two[5] = tabStrings[1];
 					Response response2 = new Response(2, two);
 					saveTransaction(response2.getXML(),
@@ -799,11 +817,12 @@ public class CardPanel extends JPanel implements ActionListener {
 						tabStrings[5] = "";
 						tabStrings[6] = "";
 						current = ".00";
-						counter = 0;
-						limiter = false;
+						counter = 2;
+						limiter = true;
 						Tools.update(display);
 						timer.start();
 						reject = true;
+						retrn = false;
 					}
 					return;
 				}
@@ -854,9 +873,20 @@ public class CardPanel extends JPanel implements ActionListener {
 																	 */);
 						// regex.close();
 						
+						tabStrings[1] = ".00";
 						tabStrings[2] = "";
 						tabStrings[3] = "";
-						current = "";
+						tabStrings[4] = "";
+						tabStrings[5] = "";
+						tabStrings[6] = "";
+						current = ".00";
+						
+						voidsale = true;
+						timer.start();
+						reject = true;
+						retrn = false;
+						limiter = true;
+						counter = 2;
 						Tools.update(display);
 					}
 					return;
@@ -977,9 +1007,12 @@ public class CardPanel extends JPanel implements ActionListener {
 		return dir.list().length + 1;
 	}
 
-	private String[] num2() {
-		String toReturn[] = new String[8];
 
+	
+	private String[] num2() {
+		
+		String toReturn[] = new String[10];
+		
 		Scanner reader = null;
 		Scanner regex = null;
 
@@ -1007,7 +1040,27 @@ public class CardPanel extends JPanel implements ActionListener {
 					toReturn[2] = regex.findInLine("<RecordNo>.*</RecordNo>");
 					toReturn[2] = toReturn[2].substring("<RecordNo>".length(),
 							toReturn[2].length() - "</RecordNo>".length());
+				}else if (read.contains("Authorize")) {
+					toReturn[3] = regex.findInLine("<Authorize>.*</Authorize>");
+					toReturn[3] = toReturn[3].substring("<Authorize>".length(),
+							toReturn[3].length() - "</Authorize>".length()).trim();
+					toReturn[4] = toReturn[3];
+				}else if (read.contains("Purchase")) {
+					toReturn[8] = regex.findInLine("<Purchase>.*</Purchase>");
+					toReturn[8] = toReturn[8].substring("<Purchase>".length(),
+							toReturn[8].length() - "</Purchase>".length()).trim();
+
+				}else if (read.contains("TextResponse")) {
+					toReturn[9] = regex.findInLine("<TextResponse>.*</TextResponse>");
+					toReturn[9] = toReturn[9].substring("<TextResponse>".length(),
+							toReturn[9].length() - "</TextResponse>".length()).trim();
+				
+
 				}
+				
+			
+			
+				
 			}
 			reader.close();
 			reader = new Scanner(new File("Files/Transaction/Sent/1/"
@@ -1033,20 +1086,53 @@ public class CardPanel extends JPanel implements ActionListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
+	
 		return toReturn;
 	}
 
 	private static String[] num3() {
 		return num3(receiptSave, false);
 	}
+	
+	private static String[] num3(boolean voidsale) {
+		return num3(receiptSave, voidsale);
+	}
+	
+	private Object[] checkForPartialApproval(){
+		String [] checker = num2();
+		Object [] retrn = new Object [3];
+		retrn[0] = false;
+		System.out.println(checker[3] + checker[8] + checker[9]);
+		if(checker[3] != null && checker[3] != null && checker[3] != null){
+			System.out.println((!checker[3].equals(checker[8])) + "" + checker[9].equalsIgnoreCase("Partial AP"));
+			if((!checker[3].equals(checker[8])) && checker[9].equalsIgnoreCase("Partial AP")){
+				retrn[1] = checker[8];
+				retrn[2] = checker[3];
+				
+				int purchase = Integer.valueOf(checker[8].replace(".", ""));
+				int authorize = Integer.valueOf(checker[3].replace(".", ""));
+				int subt = purchase - authorize;
+				//DecimalFormat df = new DecimalFormat("0.00");
+				ReceiptPanel.clearReceipt();
+				ReceiptPanel.addItem(String.valueOf(subt), "Remaining Balance For " + receiptSave.getName());
+				ReceiptPanel.saveReceipt("Remaing Balance For " + receiptSave.getName());
+				display.setText("Insufficient balance in the card - please complete the Remaining transaction");
 
+				retrn[0] = true;
+				return retrn; 
+			}
+		}
+		return retrn;
+	}
+	
 	// changed to Static
 	protected static String[] num3(File receiptSaveTemp, boolean voidSale) {
 		String toReturn[] = new String[10];
 
 		String file1 = "Files/Transaction/", file2 = "/"
 				+ receiptSaveTemp.getName() + ".xml";
+		
 		Scanner reader = null;
 		Scanner regex = null;
 
@@ -1070,11 +1156,11 @@ public class CardPanel extends JPanel implements ActionListener {
 				toReturn[8] = regex
 						.findInLine("<MerchantID>[\\da-zA-Z =]+</MerchantID>");
 				toReturn[8] = toReturn[8].substring("<MerchantID>".length(),
-						toReturn[8].length() - "</MerchantID>".length());
-				Pattern p = Pattern.compile("[\\da-zA-z=]+");
+						toReturn[8].length() - "</MerchantID>".length()).trim();
+				/*Pattern p = Pattern.compile("[\\da-zA-z=]+");
 				Matcher m = p.matcher(toReturn[8]);
 			    m.find();
-			    toReturn[8] = m.group();
+			    toReturn[8] = m.group();*/
 				
 			}
 			else if (read.contains("InvoiceNo")) {
@@ -1099,18 +1185,24 @@ public class CardPanel extends JPanel implements ActionListener {
 						toReturn[2].length() - "</Memo>".length());
 			} else if (read.contains("RecordNo")) {
 				toReturn[3] = regex.findInLine("<RecordNo>.*</RecordNo>");
+				//if(toReturn[3] != null){
 				toReturn[3] = toReturn[3].substring("<RecordNo>".length(),
 						toReturn[3].length() - "</RecordNo>".length());
+			//	}
 			} else if (read.contains("AuthCode")) {
 				toReturn[7] = regex
 						.findInLine("<AuthCode>[\\da-zA-Z]</AuthCode>");
+			//	if(toReturn[7] != null){
 				toReturn[7] = toReturn[7].substring("<AuthCode>".length(),
 						toReturn[7].length() - "</AuthCode>".length());
+			//	}
 			} else if (read.contains("AcqRefData")) {
 				toReturn[5] = regex
 						.findInLine("<AcqRefData>[\\da-zA-Z ]*</AcqRefData>");
+			//	if(toReturn[5] != null){
 				toReturn[5] = toReturn[5].substring("<AcqRefData>".length(),
 						toReturn[5].length() - "</AcqRefData>".length());
+			//	}
 			}
 		}
 		reader.close();
@@ -1184,10 +1276,18 @@ public class CardPanel extends JPanel implements ActionListener {
 					toReturn[1] = toReturn[1].substring("<RefNo>".length(),
 							toReturn[1].length() - "</RefNo>".length());
 				}
+				else if (read.contains("Authorize")) {
+					toReturn[4] = regex.findInLine("<Authorize>.*</Authorize>");
+					toReturn[4] = toReturn[4].substring("<Authorize>".length(),
+							toReturn[4].length() - "</Authorize>".length()).trim();
+					
+				}
 			}
+			voidsale = false;
 		}
 		reader.close();
 		
+
 		return toReturn;
 	}
 
@@ -1382,5 +1482,8 @@ public class CardPanel extends JPanel implements ActionListener {
 	public static void caretPosition(){
 		String c = display.getText();
 		display.setCaretPosition(c.length());
+	}
+	public static boolean getVoidsale() {
+		 return voidsale;
 	}
 }

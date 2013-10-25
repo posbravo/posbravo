@@ -76,7 +76,7 @@ public class ReceiptLoader extends JPanel implements ActionListener
 			deleteAll();
 		if(event.getActionCommand().equals("Void") && receiptList.getSelectedIndex() > -1 && checkValidState(receiptList.getSelectedValue()))
 		{
-			Response response3 = new Response(5, CardPanel.num3(new File(RECEIPT_PATH + "/" + receiptList.getSelectedValue()), true));
+			Response response3 = new Response(5, CardPanel.num3(new File(RECEIPT_PATH + "/" + receiptList.getSelectedValue()), CardPanel.getVoidsale()));
 			CardPanel.saveTransaction(response3.getXML(), response3.getResponse(), 3, new File(RECEIPT_PATH + "/" + receiptList.getSelectedValue()));
 			if(response3.getResponse().contains("Approved")) {
 				ProcessPanel.closeReceipt("VOIDED", new File(RECEIPT_PATH + "/" + receiptList.getSelectedValue()));
