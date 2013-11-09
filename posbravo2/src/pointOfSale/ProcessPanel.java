@@ -276,9 +276,7 @@ public class ProcessPanel extends JPanel implements ActionListener {
 		}
 		try {
 			printer = new PrintWriter(file);
-			toPrint.replace(purchase, authorize);
-			System.out.println(toPrint);
-			printer.println(toPrint);
+			printer.println(toPrint.replace(purchase, authorize));
 			printer.flush();
 			printer.close();
 		} catch (FileNotFoundException e) {

@@ -22,11 +22,11 @@ public class TestXML {
 		ReceiptPanel.saveReceipt();
 		if(true)return;
 		*/
-		Object retrn[] = new Object[]{true};
-		if((boolean)retrn[0] == true){
-			System.out.println("IT WORKS");
-			return;
-		}
+		//Object retrn[] = new Object[]{true};
+		//if((boolean)retrn[0] == true){
+		//	System.out.println("IT WORKS");
+		//	return;
+		//}
 		String ref = "0";
 		String one[] = {"10", "10", "POS BRAVO v1.0", "4003000123456781", "1215", "1.05", "1.00", "", "", ""};
 		String two[] = {"10", "10", "ADl1bYRUI2Pi5H6WO1fOHANtuxLlwlnUIhESEAAjEAeDBA==", "1.05", "1.00", "", "VI0105", "KfJ"};
@@ -35,6 +35,23 @@ public class TestXML {
 		//non encrypted cc 
 		Response set = new Response();
 		set.setIDnPas("merchantID1");
+		
+		String twel [] = {"BatchSummary", "merchantID1"};
+		
+		Response test3 = new Response(12, twel);
+		System.out.println(test3.getXML());
+		System.out.println(test3.getResponse());
+		System.out.println("____________________________________________");
+		if(true)return;
+		
+		one = new String[]{"000001", "000001", "POS BRAVO v1.0", "4003000123456781=15125025432198712345", "100.00", "Issue"};
+		
+		Response test1 = new Response(11, one);
+		System.out.println(test1.getXML());
+		System.out.println(test1.getResponse());
+		System.out.println("____________________________________________");
+		if(true)return;
+		
 		Response test = new Response(1, one);
 		
 		System.out.println(test.getXML());
@@ -71,6 +88,19 @@ public class TestXML {
 		String fiv[] = {"0001", ref, "POS BRAVO v1.0", "KqaoIkv1k9wUbUmJ9wmtTKFWZhyPMas0IhESEAAjEAeDBw==", "1.05", "KfJ", "|15|410100700000", "VI0105", "395347306=TOKEN", "1.05"};
 		
 		test = new Response(5, fiv);
+		System.out.println(test.getXML());
+		System.out.println(test.getResponse());
+
+		String eigh[] = {"10", "10", "POS BRAVO v1.0", "4003000123456781", "1215", "1.05", "1.00", "", "", ""};
+		
+		test = new Response(8, eigh);
+		System.out.println(test.getXML());
+		System.out.println(test.getResponse());
+		ref = getRefcode(test.getResponse());
+		
+		String nine[] = {"10", ref, "POS BRAVO v1.0", "KqaoIkv1k9wUbUmJ9wmtTKFWZhyPMas0IhESEAAjEAeDBw==", "1.05", "KfJ", "|15|410100700000", "VI0105", "merchantID1"};
+		
+		test = new Response(9, nine);
 		System.out.println(test.getXML());
 		System.out.println(test.getResponse());
 		

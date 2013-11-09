@@ -140,6 +140,7 @@ public class MercuryWebRequest
 		if (paramName.equals("tran"))
 			paramValue = paramValue.replace("<", "&lt;").replace(">", "&gt;").replace("\t","").replace("\n", "").replace("\r", ""); // Remove less-than, greater-than, newline, carriage return, and tab characters from value
 
+		
 		mWSParameters.put(paramName, paramValue);
 
 	}

@@ -42,6 +42,7 @@ public class ReceiptLoader extends JPanel implements ActionListener
 		
 		readReceipts();
 		receiptList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	
 		
 		titleLabel.setVerticalAlignment(SwingConstants.TOP);
 		titleLabel.setFont(new Font(Font.SERIF, Font.BOLD, 24));
@@ -61,7 +62,7 @@ public class ReceiptLoader extends JPanel implements ActionListener
 		
 		add(upperPanel);
 		add(new JScrollPane(receiptList, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, 
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER));
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS));
 	}
 	/**
 	 * Responds to user input by loading or deleting saved receipt text files
@@ -76,7 +77,7 @@ public class ReceiptLoader extends JPanel implements ActionListener
 			deleteAll();
 		if(event.getActionCommand().equals("Void") && receiptList.getSelectedIndex() > -1 && checkValidState(receiptList.getSelectedValue()))
 		{
-			Response response3 = new Response(5, CardPanel.num3(new File(RECEIPT_PATH + "/" + receiptList.getSelectedValue()), CardPanel.getVoidsale()));
+			Response response3 = new Response(5, CardPanel.num3(new File(RECEIPT_PATH + "/" + receiptList.getSelectedValue()), true));
 			CardPanel.saveTransaction(response3.getXML(), response3.getResponse(), 3, new File(RECEIPT_PATH + "/" + receiptList.getSelectedValue()));
 			if(response3.getResponse().contains("Approved")) {
 				ProcessPanel.closeReceipt("VOIDED", new File(RECEIPT_PATH + "/" + receiptList.getSelectedValue()));

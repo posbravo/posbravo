@@ -65,6 +65,7 @@ public class CardPanel extends JPanel implements ActionListener {
 	private static boolean loaded = false;
 	private static boolean backspace = false;
 	private static boolean voidsale = false;
+	private static boolean debit = false;
 	private static String temp = "";
 
 	private static MenuButton one = null;
@@ -240,11 +241,25 @@ public class CardPanel extends JPanel implements ActionListener {
 				String readerType = checkReader(swipe, response1);
 				swipe = "";
 				if (readerType.equals("IPAD100KB")) { 	
+					if(debit){
+					String [] ten = { 	"1"/*		invoiceNo,
+					refNo,
+					memo,
+					encryptedKey,
+					encryptedBlock,
+					purchase,
+					cashback,
+					encPin,
+					dervk,*/
+					};
+						response1 = new Response(10, ten);
+					}
+					else{
 					String[] four = { getInvoiceNo() + "", getInvoiceNo() + "",
 							"POS BRAVO v1.0", tabStrings[2], tabStrings[3],
 							tabStrings[0], tabStrings[0], tabStrings[4], tabStrings[5], tabStrings[6] };
 					response1 = new Response(4, four);
-
+					}
 					processXML(response1);
 
 				
@@ -398,6 +413,15 @@ public class CardPanel extends JPanel implements ActionListener {
 	private void processXML(Response response1) {
 		saveTransaction(response1.getXML(), response1.getResponse(), 1);
 		if (response1.getResponse().contains("Approved")) {
+			if(response1.getResponse().contains("Debit")){
+				ProcessPanel.closeReceipt("SWIPED");
+				tabStrings = new String[] { "", "", "", "", "", "", "" };
+				display.setText("Transaction Complete");
+				loaded = false;
+				SystemInit.setTransactionScreen();
+				return;
+			}
+		
 			ProcessPanel.closeReceipt("PROGRESS");
 			System.out.println("HERE");
 			tabStrings = new String[] { "", "", "", "", "", "", "" };
@@ -469,8 +493,23 @@ public class CardPanel extends JPanel implements ActionListener {
 
 	private static void parseSwipeE() {
 		Scanner regex = new Scanner(swipe);
-
-		System.out.println(swipe);
+		StringBuilder temp = new StringBuilder(regex.findInLine("1~.*\\|2"));
+		
+		String cardType = temp.substring(2, 3);
+		
+		if(cardType.equals("2")){
+			debit = true;
+			regex.close();
+			regex = new Scanner(swipe);
+			temp.replace(0, temp.length(), regex.findInLine("13~.*\\|14"));
+			tabStrings[ksn] = temp.substring(7, temp.length()-3);
+			regex.close();
+			regex = new Scanner(swipe);
+			temp.replace(0, temp.length(), regex.findInLine("14~.*\\|"));
+			tabStrings[pin] = temp.substring(3, temp.length()-1);
+		}
+		
+		System.out.println(temp);
 		// String[] firstsplit = swipe.split("\\|");
 		System.out.println("-----------------------------");
 		// for (String s : firstsplit) {
@@ -480,7 +519,10 @@ public class CardPanel extends JPanel implements ActionListener {
 		// }
 		// }
 		System.out.println("-----------------------------");
-		StringBuilder temp = new StringBuilder(regex.findInLine("3~.*\\|4"));
+		regex.close();
+		regex = new Scanner(swipe);
+		temp.replace(0, temp.length(), regex.findInLine("3~.*\\|4"));
+		
 		System.out.println(temp);
 		// System.out.println(temp + "\nEmpty");
 		tabStrings[3] = temp.substring(2, temp.length() - 2);
@@ -881,7 +923,7 @@ public class CardPanel extends JPanel implements ActionListener {
 						tabStrings[6] = "";
 						current = ".00";
 						
-						voidsale = true;
+						//voidsale = true;
 						timer.start();
 						reject = true;
 						retrn = false;
@@ -1229,11 +1271,11 @@ public class CardPanel extends JPanel implements ActionListener {
 				toReturn[1] = regex.findInLine("<RefNo>[\\da-zA-Z]*</RefNo>");
 				toReturn[1] = toReturn[1].substring("<RefNo>".length(),
 						toReturn[1].length() - "</RefNo>".length());
-			} else if (read.contains("Purchase")) {
+			} else if (read.contains("Authorize")) {
 				toReturn[4] = regex
-						.findInLine("<Purchase>[\\d\\.]*</Purchase>");
-				toReturn[4] = toReturn[4].substring("<Purchase>".length(),
-						toReturn[4].length() - "</Purchase>".length());
+						.findInLine("<Authorize>[\\d\\.]*</Authorize>");
+				toReturn[4] = toReturn[4].substring("<Authorize>".length(),
+						toReturn[4].length() - "</Authorize>".length());
 			} else if (read.contains("Memo")) {
 				toReturn[2] = regex.findInLine("<Memo>[\\da-zA-Z \\.]*</Memo>");
 				toReturn[2] = toReturn[2].substring("<Memo>".length(),
@@ -1415,7 +1457,7 @@ public class CardPanel extends JPanel implements ActionListener {
 		res = new Response();
 
 		swipe = swipe.substring(2, 11);
-
+		
 		String retrn;
 		switch (swipe) {
 		case "IPAD100KB":
