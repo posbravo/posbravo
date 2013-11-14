@@ -22,10 +22,11 @@ public class Response{
 	
 	private final String webURL = "https://w1.mercurydev.net/ws/ws.asmx";
 	private int type, timeout;
-	private static String merchantID /*"023358150511666""395347306=TOKEN"*/  , cashback, encPin, dervk, cvv, addr, zip, tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
+	private static String merchantID /*"023358150511666""395347306=TOKEN"*/ , entryType , cashback, encPin, dervk, cvv, addr, zip, tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
 	private static String password /*= "123TOKEN"*/;
 	private String result = "", response = "";
 	
+	public static boolean batch = false;
     public Response()
     {
     
@@ -88,6 +89,9 @@ public class Response{
 			purchase = data[5];
 			authorize = data[6];
 			gratuity = "0.0";
+			addr = data[8];
+			zip = data[9];
+			entryType = data[10];
 			result = getResult4();
 		break;
 		
@@ -104,20 +108,25 @@ public class Response{
 		authCode = data[7];
 		result = getResult5();
 		break;
-		
+		 
+		//Credit Sale
 		case 6: tranCode = "Sale";
 		invoiceNo = data[0];
 		refNo = data[1];
 		memo = data[2];
 		recordNo = "RecordNumberRequested";
-		accountNum = data[3];
-		expDate = data[4];
+		//accountNum = data[3];
+		//expDate = data[4];
+		encryptedKey = data[3];
+		encryptedBlock = data[4];
 		purchase = data[5];
-		authorize = data[6];
-		cvv = data[7];
-		addr = data[8];
-		zip = data[9];
-		result = getResult6();
+		//authorize = data[6];
+		//cvv = data[6];
+		addr = data[6];
+		zip = data[7];
+		entryType = data[8];
+		//result = getResult6();
+		result = getResult13();
 		break;
 		
 		case 7: tranCode = "AdjustByRecordNo";
@@ -130,8 +139,8 @@ public class Response{
 		//acqRefData = data[5];
 		//processData = data[6];
 		authCode = data[7];
-		authorize = data[9];
-		gratuity = data[10];
+		authorize = data[5];
+		gratuity = data[6];
 		result = getResult7();
 		break;
 		
@@ -140,28 +149,33 @@ public class Response{
 		refNo = data[1];
 		memo = data[2];
 		recordNo = "RecordNumberRequested";
-		accountNum = data[3];
-		expDate = data[4];
+		//accountNum = data[3];
+		//expDate = data[4];
+		encryptedKey = data[3];
+		encryptedBlock = data[4];
 		purchase = data[5];
 		authorize = data[6];
-		gratuity = "0.0";
-		cvv = data[7];
-		addr = data[8];
-		zip = data[9];
-		result = getResult1();
+		//gratuity = "0.0";
+		//cvv = data[7];
+		entryType = data[7];
+		if(entryType.equals("Keyed")){
+			addr = data[8];
+			zip = data[9];
+		}
+		result = getResult4();
 		break;
 		
 		case 9: tranCode = "VoidReturnByRecordNo";
-	    setIDnPas(data[8]);
+	    setIDnPas(data[6]);
 		invoiceNo = data[0];
 		refNo = data[1];
 		memo = data[2];
 		recordNo = data[3];
 		purchase = data[4];
-		acqRefData = data[5];
-		processData = data[6];
-		authCode = data[7];
-		result = getResult3();
+		//acqRefData = data[5];
+		//processData = data[6];
+		authCode = data[5];
+		result = getResult5();
 		break;
 		
 		//debit sale
@@ -180,20 +194,24 @@ public class Response{
 		break;
 		
 		//gift card for non-encrypted
-		case 11: tranCode = data[5];
-		merchantID = "595901";
-		password = "xyz";
+		case 11: entryType = data[0];
+		tranCode = data[1];
+		setIDnPas(data[2]);
 		tranType = "PrePaid";
-		invoiceNo = data[0];
-		refNo = data[1];
-		memo = data[2];
-		recordNo = "RecordNumberRequested";
-		accountNum = data[3];
+		invoiceNo = data[3];
+		refNo = data[4];
+		memo = data[5];
+		//recordNo = "RecordNumberRequested";
+		encryptedKey = data[6];
+		encryptedBlock = data[7];
 		//expDate = data[4];
-		purchase = data[4];
-		if(tranCode.equals("VoidSale")){
-			authCode = data[6];
+		if(!tranCode.equals("Balance")){
+			purchase = data[8];
 		}
+		if(tranCode.contains("Void")){
+			authCode = data[9];
+		}
+		
 		//authorize = data[6];
 		//gratuity = "0.0";
 		//cvv = data[7];
@@ -280,8 +298,8 @@ public class Response{
 		temp += authorize;
 		temp += "</Authorize>\n\t\t</Amount>";
 		temp += "\n\t\t<CVVData>" + cvv + "</CVVData>";
-		temp += "\n\t<AVS>\n\t\t<Address>" + addr + "</Address>";
-		temp += "\n\t\t<Zip>" + zip + "</Zip>\n\t</AVS>";
+		temp += "\n\t\t<AVS>\n\t\t\t<Address>" + addr + "</Address>";
+		temp += "\n\t\t\t<Zip>" + zip + "</Zip>\n\t\t</AVS>";
 		temp+= "\n\t</Transaction>\n</TStream>";
 		
 		return temp;
@@ -291,7 +309,7 @@ public class Response{
 	{
 		String temp = "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";
 		temp += merchantID;
-		temp += "</MerchantID>\n\t\t<TranType>";
+		temp += "</MerchantID>\n\t\t<OperatorID>test</OperatorID>\n\t\t<TranType>";
 		temp += tranType;
 		temp += "</TranType>\n\t\t<TranCode>";
 		temp += tranCode;
@@ -324,7 +342,7 @@ public class Response{
 	{
 		String temp = "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";
 		temp += merchantID;
-		temp += "</MerchantID>\n\t\t<TranType>";
+		temp += "</MerchantID>\n\t\t<OperatorID>test</OperatorID>\n\t\t<TranType>";
 		temp += tranType;
 		temp += "</TranType>\n\t\t<TranCode>";
 		temp += tranCode;
@@ -373,17 +391,25 @@ public class Response{
 		temp += recordNo;
 		temp += "</RecordNo>";
 		temp += "\n\t\t<Account>";
-		temp += "\n\t\t\t<EncryptedFormat>MagneSafe</EncryptedFormat>\n\t\t\t<AccountSource>Swiped</AccountSource>";
+		temp += "\n\t\t\t<EncryptedFormat>MagneSafe</EncryptedFormat>\n\t\t\t<AccountSource>";
+		temp += entryType + "</AccountSource>";
 		temp += "\n\t\t\t<EncryptedBlock>";
 		temp += encryptedBlock;
 		temp += "</EncryptedBlock>\n\t\t\t<EncryptedKey>";
 		temp += encryptedKey;
 		temp += "</EncryptedKey>\n\t\t</Account>";
-		temp += "\n<Amount>\n\t\t\t<Purchase>";
+		temp += "\n\t\t<Amount>\n\t\t\t<Purchase>";
 		temp += purchase;
 		temp += "</Purchase>\n\t\t\t<Authorize>";
 		temp += authorize;
-		temp += "</Authorize>\n\t\t</Amount>\n\t</Transaction>\n</TStream>";
+		temp += "</Authorize>\n\t\t</Amount>";
+		if(entryType != null){
+			if(entryType.equals("Keyed")){	
+		temp += "\n\t\t<AVS>\n\t\t\t<Address>" + addr + "</Address>";
+		temp += "\n\t\t\t<Zip>" + zip + "</Zip>\n\t\t</AVS>";
+			}
+		}
+		temp += "\n\t</Transaction>\n</TStream>";
 		
 		return temp;
 	}
@@ -534,20 +560,20 @@ public class Response{
 		temp += refNo;
 		temp += "</RefNo>\n\t\t<Memo>";
 		temp += memo;
-		temp += "</Memo>";//\n\t\t<Frequency>";
-		//temp += frequency;
-		//temp += "</Frequency>\n\t\t<RecordNo>";
-		//temp += recordNo;
-		//temp += /*"</RecordNo>*/"\n\t\t<PartialAuth>";
-		//temp += partialAuth;
-		temp += /*"</PartialAuth>*/"\n\t\t<Account>\n\t\t\t<Track2>";
-		temp += accountNum;
-		temp += /*"</AcctNo>*/"</Track2>\n\t\t</Account>";
+		temp += "</Memo>";
+		temp += "\n\t\t<Account>\n\t\t\t";
+		temp += "\n\t\t\t<EncryptedFormat>MagneSafe</EncryptedFormat>\n\t\t\t<AccountSource>";
+		temp += entryType + "</AccountSource>";
+		temp += "\n\t\t\t<EncryptedBlock>";
+		temp += encryptedBlock;
+		temp += "</EncryptedBlock>\n\t\t\t<EncryptedKey>";
+		temp += encryptedKey;
+		temp += "</EncryptedKey>\n\t\t</Account>";
 		if(!tranCode.equals("Balance")){
-		temp += "\n\t\t<Amount>\n\t\t\t<Purchase>" + purchase;
-		temp += "</Purchase>\n\t\t</Amount>";
+			temp += "\n\t\t<Amount>\n\t\t\t<Purchase>" + purchase;
+			temp += "</Purchase>\n\t\t</Amount>";
 		}
-		if(tranCode.equals("VoidSale")){
+		if(tranCode.contains("Void")){
 			temp += "\n\t\t<AuthCode>" + authCode + "</AuthCode>";
 		}
 		temp+= "\n\t</Transaction>\n</TStream>";
@@ -567,22 +593,78 @@ public class Response{
 		
 		return temp;
 	}
+	//for magtek ipad 100kb Credit Sale
+		private String getResult13()
+		{
+			String temp = "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";
+			temp += merchantID;
+			temp += "</MerchantID>\n\t\t<OperatorID>test</OperatorID>\n\t\t<TranType>";
+			temp += tranType;
+			temp += "</TranType>\n\t\t<TranCode>";
+			temp += tranCode;
+			temp += "</TranCode>\n\t\t<InvoiceNo>";
+			temp += invoiceNo;//"38";
+			temp += "</InvoiceNo>\n\t\t<RefNo>";
+			temp += refNo;//"38";
+			temp += "</RefNo>\n\t\t<Memo>";
+			temp += memo;
+			temp += "</Memo>\n\t\t<PartialAuth>";
+			temp += partialAuth;
+			temp += "</PartialAuth>\n\t\t<Frequency>";
+			temp += frequency;
+			temp += "</Frequency>\n\t\t<RecordNo>";
+			temp += recordNo;
+			temp += "</RecordNo>";
+			temp += "\n\t\t<Account>";
+			temp += "\n\t\t\t<EncryptedFormat>MagneSafe</EncryptedFormat>\n\t\t\t<AccountSource>";
+			temp += entryType + "</AccountSource>";
+			temp += "\n\t\t\t<EncryptedBlock>";
+			temp += encryptedBlock;
+			temp += "</EncryptedBlock>\n\t\t\t<EncryptedKey>";
+			temp += encryptedKey;
+			temp += "</EncryptedKey>\n\t\t</Account>";
+			temp += "\n\t\t<Amount>\n\t\t\t<Purchase>";
+			temp += purchase;
+			temp += "</Purchase>\n\t\t</Amount>";
+			if(entryType != null){
+				if(entryType.equals("Keyed")){
+					temp += "\n\t\t<AVS>\n\t\t\t<Address>" + addr + "</Address>";
+					temp += "\n\t\t\t<Zip>" + zip + "</Zip>\n\t\t</AVS>";
+				}
+			}
+			temp += "\n\t</Transaction>\n</TStream>";
+			
+			return temp;
+		}
+
 	
 	public void send()
 	{
 		try {
 			MercuryWebRequest test = new MercuryWebRequest(webURL);
-			test.addParameter("tran", result);
+			//if(!batch)
+				test.addParameter("tran", result);
+			//else
+				//test.addParameter("merchant", merchantID);
+			
 			System.out.println(password);
 			//test.addParameter("merchant", merchantID);
 			test.addParameter("pw", /*"123TOKEN""xyz" */password);
-			test.setWebMethodName("CreditTransaction");
-			//test.setWebMethodName("GiftTransaction");
+			if(tranType.equals("Credit")){
+				test.setWebMethodName("CreditTransaction");
+			}
+			else{
+				test.setWebMethodName("GiftTransaction");
 
-			//test.setWebMethodName("CBatch");
+			}
+			//if(batch){
+				//test.setWebMethodName("CBatch");
+			//}
+
+			//
 			test.setTimeout(timeout);
 			String response = test.sendRequest();
-			JOptionPane.showMessageDialog(null, response);
+			//JOptionPane.showMessageDialog(null, response);
 			if(response.contains("\t")){
 			this.response = response.replaceAll(">\t", ">\n\t");}
 			else{this.response = response.replaceAll("><", ">\n\t<").replaceAll("> {3,6}", ">\n\t");}
