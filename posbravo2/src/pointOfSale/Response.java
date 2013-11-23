@@ -22,7 +22,7 @@ public class Response{
 	
 	private final String webURL = "https://w1.mercurydev.net/ws/ws.asmx";
 	private int type, timeout;
-	private static String merchantID /*"023358150511666""395347306=TOKEN"*/ , soap, startDate, endDate, batchNo, itemCount, netBatch, creditCount, creditAmt, creditRetCount, creditRetAmt, debitPurCount, debitPurAmt, debitRetCount, debitRetAmt, entryType , cashback, encPin, dervk, cvv, addr, zip, tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
+	private static String merchantID /*"023358150511666""395347306=TOKEN"*/ , track2, soap, startDate, endDate, batchNo, itemCount, netBatch, creditCount, creditAmt, creditRetCount, creditRetAmt, debitPurCount, debitPurAmt, debitRetCount, debitRetAmt, entryType , cashback, encPin, dervk, cvv, addr, zip, tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
 	private static String password /*= "123TOKEN"*/;
 	private String result = "", response = "";
 	
@@ -43,14 +43,15 @@ public class Response{
 			refNo = data[1];
 			memo = data[2];
 			recordNo = "RecordNumberRequested";
-			accountNum = data[3];
-			expDate = data[4];
-			purchase = data[5];
-			authorize = data[6];
-			gratuity = "0.0";
-			cvv = data[7];
-			addr = data[8];
-			zip = data[9];
+			//accountNum = data[3];
+			//expDate = data[4];
+			track2 = data[3];
+			purchase = data[4];
+			authorize = data[5];
+			//gratuity = "0.0";
+			//cvv = data[7];
+			//addr = data[8];
+			//zip = data[9];
 			result = getResult1();
 			break;
 		case 2: tranCode = "PreAuthCaptureByRecordNo";
@@ -314,18 +315,15 @@ public class Response{
 		temp += recordNo;
 		temp += "</RecordNo>\n\t\t<PartialAuth>";
 		temp += partialAuth;
-		temp += "</PartialAuth>\n\t\t<Account>\n\t\t\t<AcctNo>";
-		temp += accountNum;
-		temp += "</AcctNo>\n\t\t\t<ExpDate>";
-		temp += expDate;
-		temp += "</ExpDate>\n\t\t</Account>\n\t\t<Amount>\n\t\t\t<Purchase>";
+		temp += "</PartialAuth>\n\t\t<Account>\n\t\t\t<Track2>";//\n\t\t\t<AcctNo>";
+		temp += track2;//accountNum;
+		temp += "</Track2>"; //"</AcctNo>\n\t\t\t<ExpDate>";
+		//temp += expDate;
+		temp += /*</ExpDate>*/"\n\t\t</Account>\n\t\t<Amount>\n\t\t\t<Purchase>";
 		temp += purchase;
 		temp += "</Purchase>\n\t\t\t<Authorize>";
 		temp += authorize;
 		temp += "</Authorize>\n\t\t</Amount>";
-		temp += "\n\t\t<CVVData>" + cvv + "</CVVData>";
-		temp += "\n\t\t<AVS>\n\t\t\t<Address>" + addr + "</Address>";
-		temp += "\n\t\t\t<Zip>" + zip + "</Zip>\n\t\t</AVS>";
 		temp+= "\n\t</Transaction>\n</TStream>";
 		
 		return temp;
@@ -682,6 +680,7 @@ public class Response{
 			MercuryWebRequest test = new MercuryWebRequest(webURL);
 			//if(!batch)
 			if(!tranType.equals("CBatch") && !tranType.equals("CAllDetail") && !tranType.equals("CTranDetail")  && !tranType.equals("CAllGiftDetail")){
+				
 				test.addParameter("tran", result);
 				test.addParameter("pw", /*"123TOKEN""xyz" */password);
 			}
@@ -704,7 +703,7 @@ public class Response{
 			//else
 				//test.addParameter("merchant", merchantID);
 			
-			System.out.println(password);
+			//System.out.println(password);
 			//test.addParameter("merchant", merchantID);
 			if(tranType.equals("Credit") || tranType.equals("Debit")){
 				test.setWebMethodName("CreditTransaction");
@@ -729,16 +728,20 @@ public class Response{
 				//test.setWebMethodName("CBatch");
 			//}
 
-			//
+			//Timeout can cause the Read timed out if set this too low.
 			test.setTimeout(timeout);
-			String []response = test.sendRequest();
+			String []response={"",""};
+			response = test.sendRequest();
 			soap = response[1];
 			soap = soap.replaceAll(">", ">\n");
-			//JOptionPane.showMessageDialog(null, response);
-			if(response[0].contains("\t")){
-			this.response = response[0].replaceAll(">\t", ">\n\t");}
-			else{this.response = response[0].replaceAll("><", ">\n\t<").replaceAll("> {3,6}", ">\n\t");}
-			//System.out.println(response.replaceAll(">\t", ">\n\t"));
+			// JOptionPane.showMessageDialog(null, response);
+			if (response[0].contains("\t")) {
+				this.response = response[0].replaceAll(">\t", ">\n\t");
+			} else {
+				this.response = response[0].replaceAll("><", ">\n\t<")
+						.replaceAll("> {3,6}", ">\n\t");
+			}
+			// System.out.println(response.replaceAll(">\t", ">\n\t"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
