@@ -14,7 +14,7 @@ public class CardPresentSwipedSale {
 		Response set = new Response();
 		set.setIDnPas("merchantID2");
 		
-		String card = "0~IPAD100KB|24~98AC18281702140C|1~33|2~EC5A3972BE3A7DD16559861151BAE7C5F961B63D9ED7076DF0C835F873FA9E48ABD0535C751C322E8EA493ED015F7A0DF3312600C8C4AA9E|3~FD1E93B24B1F14EC989506E6CC04E1C360948EDEC23FFBAFE724DD4C04B847D3E243466E7738ABCC|4~|6~%M4005550000000480^MANUAL ENTRY/^1512000000000000000?|7~;4005550000000480=1512000000000000?|8~|9~00000000|10~000001|11~9500030000081C2000CB|12~00000000|";
+		String card = "0~IPAD100KB|24~98AC18281702140C|1~11|2~812C72CA9B05C907CBB9AB95EA7D86E3AEB5698B38AC7601A45BB9DC1D42CEEDC7BD8587052209946689EC23356E1C67|3~D7E14F5CB294A2D8F2D3D93F700BF425DD7585BC1366294BD3FE39BCC4258D66F1D8C2B5BC8AB9E7|4~|5~7F4EB719A60BB8D4965488647134621C0AA803D8FD6B5AE1678F86177318FCAB08E5EB43450853345F2C51C2EAEF46F62F982F3B49D6BEAC|6~%B4005550000000480^TEST/MPS^15120000000000000?|7~;4005550000000480=15120000000000000000?|8~|9~00000000|10~000001|11~9500030000081C2000D2|12~00002200|";
 		Pattern pregex = Pattern.compile("3~.*\\|4"); //encrypted card data
 		Matcher m = pregex.matcher(card);
 		m.find();
@@ -24,10 +24,10 @@ public class CardPresentSwipedSale {
 		m1.find();
 //case#1 Sale/Reverse Voidsale
 		//replace card data with swiped
-/*		
+	
 		
 		//Sale
-		String yuk[] = {"29", "29", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "2.02", "1661 E. Camelback", "85016", "Swiped"};
+/*		String yuk[] = {"35", "35", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "2.02", "Swiped"};
 
 		Response test = new Response(6, yuk);
 
@@ -38,17 +38,18 @@ public class CardPresentSwipedSale {
 		//Reversal Voidsale
 		String [] info2 = getCodes(test.getResponse());
 				
-		String three[] = {"29", info2[1], "POS BRAVO v1.0", info2[2], "2.02", info2[3], info2[4], info2[0], "merchantID2" };
+		String three[] = {"36", info2[1], "POS BRAVO v1.0", info2[2], "2.02", info2[3], info2[4], info2[0], "merchantID2" };
 
 		test = new Response(3, three);
 				
 		System.out.println(test.getXML());
 		System.out.println(test.getResponse());
 		System.out.println("____________________________________________");
-		*/
+	*/
 //case#2 Sale/Reversal Voidsale/Voidsale
 		//Sale
-/*		String yuk[] = {"30", "30", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "24.01", "1661 E. Camelback", "85016", "Swiped"};
+		
+		String yuk[] = {"14", "14", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "24.01", "Swiped"};
 
 		Response test = new Response(6, yuk);
 
@@ -59,7 +60,7 @@ public class CardPresentSwipedSale {
 		//Reversal Voidsale
 		String [] info2 = getCodes(test.getResponse());
 				
-		String three[] = {"30", info2[1], "POS BRAVO v1.0", info2[2], "24.01", info2[3], info2[4], info2[0], "merchantID2" };
+		String three[] = {"15", info2[1], "POS BRAVO v1.0", info2[2], "24.01", info2[3], info2[4], info2[0], "merchantID2" };
 
 		test = new Response(3, three);
 				
@@ -69,15 +70,18 @@ public class CardPresentSwipedSale {
 		
 		//Standard Voidsale
 		
+		three = new String[]{"16", info2[1], "POS BRAVO v1.0", info2[2], "24.01", info2[3], info2[4], info2[0], "merchantID2" };
+
+		
 		test = new Response(5, three);
 		
 		System.out.println(test.getXML());
 		System.out.println(test.getResponse());
 		System.out.println("____________________________________________");
-	*/
+
 //case#3 Sale/Adjust/Voidsale
 		//Sale
-/*		String yuk[] = {"31", "31", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "2.03", "1661 E. Camelback", "85016", "Swiped"};
+	/*	String yuk[] = {"40", "40", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "2.03", "Swiped"};
 
 		Response test = new Response(6, yuk);
 
@@ -87,7 +91,7 @@ public class CardPresentSwipedSale {
 		
 		//Adjust
 		String [] info2 = getCodes(test.getResponse());
-		String []adj = new String[]{"31", info2[1], "POS BRAVO v1.0", info2[2], "2.13", "2.13", "", info2[0], "merchantID2"};
+		String []adj = new String[]{"40", info2[1], "POS BRAVO v1.0", info2[2], "2.13", "2.13", "", info2[0], "merchantID2"};
 		
 		test = new Response(7, adj);
 
@@ -98,7 +102,7 @@ public class CardPresentSwipedSale {
 		
 		//Standard Voidsale
 		info2 = getCodes(test.getResponse());
-		String three[] = {"31", info2[1], "POS BRAVO v1.0", info2[2], "2.13", info2[3], info2[4], info2[0], "merchantID2" };
+		String three[] = {"41", info2[1], "POS BRAVO v1.0", info2[2], "2.13", info2[3], info2[4], info2[0], "merchantID2" };
 
 		test = new Response(5, three);
 		
@@ -108,7 +112,7 @@ public class CardPresentSwipedSale {
 		*/
 //case#4 Sale/Adjust/Voidsale
 		//Sale
-/*		String yuk[] = {"32", "32", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "2.04", "1661 E. Camelback", "85016", "Swiped"};
+/*		String yuk[] = {"42", "42", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "2.04", "Swiped"};
 
 		Response test = new Response(6, yuk);
 
@@ -118,7 +122,7 @@ public class CardPresentSwipedSale {
 				
 		//Adjust
 		String [] info2 = getCodes(test.getResponse());
-		String []adj = new String[]{"32", info2[1], "POS BRAVO v1.0", info2[2], "2.04", "2.04", "1.00", info2[0], "merchantID2"};
+		String []adj = new String[]{"42", info2[1], "POS BRAVO v1.0", info2[2], "2.04", "2.04", "1.00", info2[0], "merchantID2"};
 	
 		test = new Response(7, adj);
 
@@ -129,17 +133,17 @@ public class CardPresentSwipedSale {
 				
 		//Standard Voidsale
 		//info2 = getCodes(test.getResponse());
-		String three[] = {"32", info2[1], "POS BRAVO v1.0", info2[2], "3.04", info2[3], info2[4], info2[0], "merchantID2" };
+		String three[] = {"43", info2[1], "POS BRAVO v1.0", info2[2], "3.04", info2[3], info2[4], info2[0], "merchantID2" };
 
 		test = new Response(5, three);
 				
 		System.out.println(test.getXML());
 		System.out.println(test.getResponse());
 		System.out.println("____________________________________________");
-	*/	
+		*/
 //case#5 Sale/Sale
-/*		//Sale
-		String yuk[] = {"33", "33", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "23.54", "1661 E. Camelback", "85016", "Swiped"};
+		//Sale
+/*		String yuk[] = {"44", "44", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "23.54",  "Swiped"};
 
 		Response test = new Response(6, yuk);
 
@@ -148,7 +152,7 @@ public class CardPresentSwipedSale {
 		System.out.println("____________________________________________");
 		
 		//Sale
-		String yuk2[] = {"34", "34", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "3.54", "1661 E. Camelback", "85016", "Swiped"};
+		String yuk2[] = {"45", "45", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "3.54", "Swiped"};
 
 		test = new Response(6, yuk2);
 
@@ -158,7 +162,7 @@ public class CardPresentSwipedSale {
 		*/
 //case#6 Sale/Reversal Voidsale
 		//Sale
-/*		String yuk[] = {"35", "35", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "23.54", "1661 E. Camelback", "85016", "Swiped"};
+/*		String yuk[] = {"46", "46", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "23.54", "Swiped"};
 
 		Response test = new Response(6, yuk);
 
@@ -169,7 +173,7 @@ public class CardPresentSwipedSale {
 		//Reversal Voidsale
 		String [] info2 = getCodes(test.getResponse());
 				
-		String three[] = {"35", info2[1], "POS BRAVO v1.0", info2[2], "20.00", info2[3], info2[4], info2[0], "merchantID2" };
+		String three[] = {"47", info2[1], "POS BRAVO v1.0", info2[2], "20.00", info2[3], info2[4], info2[0], "merchantID2" };
 
 		test = new Response(3, three);
 				

@@ -22,7 +22,7 @@ public class Response{
 	
 	private final String webURL = "https://w1.mercurydev.net/ws/ws.asmx";
 	private int type, timeout;
-	private static String merchantID /*"023358150511666""395347306=TOKEN"*/ , entryType , cashback, encPin, dervk, cvv, addr, zip, tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
+	private static String merchantID /*"023358150511666""395347306=TOKEN"*/ , soap, startDate, endDate, batchNo, itemCount, netBatch, creditCount, creditAmt, creditRetCount, creditRetAmt, debitPurCount, debitPurAmt, debitRetCount, debitRetAmt, entryType , cashback, encPin, dervk, cvv, addr, zip, tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
 	private static String password /*= "123TOKEN"*/;
 	private String result = "", response = "";
 	
@@ -89,9 +89,7 @@ public class Response{
 			purchase = data[5];
 			authorize = data[6];
 			gratuity = "0.0";
-			addr = data[8];
-			zip = data[9];
-			entryType = data[10];
+			entryType = data[7];
 			result = getResult4();
 		break;
 		
@@ -122,9 +120,9 @@ public class Response{
 		purchase = data[5];
 		//authorize = data[6];
 		//cvv = data[6];
-		addr = data[6];
-		zip = data[7];
-		entryType = data[8];
+		//addr = data[6];
+		//zip = data[7];
+		entryType = data[6];
 		//result = getResult6();
 		result = getResult13();
 		break;
@@ -136,11 +134,11 @@ public class Response{
 		memo = data[2];
 		recordNo = data[3];
 		purchase = data[4];
+		authorize = data[5];
+		gratuity = data[6];
 		//acqRefData = data[5];
 		//processData = data[6];
 		authCode = data[7];
-		authorize = data[5];
-		gratuity = data[6];
 		result = getResult7();
 		break;
 		
@@ -180,20 +178,22 @@ public class Response{
 		
 		//debit sale
 		case 10:
-			tranCode = "Debit";
-			invoiceNo = data[0];
-			refNo = data[1];
-			memo = data[2];
-			encryptedKey = data[3];
-			encryptedBlock = data[4];
-			purchase = data[5];
-			cashback = data[6];
-			encPin = data[7];
-			dervk = data[8];
+			tranCode = data[0];
+			tranType = "Debit";
+			recordNo = "RecordNumberRequested";
+			invoiceNo = data[1];
+			refNo = data[2];
+			memo = data[3];
+			encryptedKey = data[4];
+			encryptedBlock = data[5];
+			purchase = data[6];
+			cashback = data[7];
+			encPin = data[8];
+			dervk = data[9];
 			result = getResult10();
 		break;
 		
-		//gift card for non-encrypted
+		//gift for encrypted
 		case 11: entryType = data[0];
 		tranCode = data[1];
 		setIDnPas(data[2]);
@@ -220,13 +220,39 @@ public class Response{
 		result = getResult11();
 		break;
 		
-		//gift for encrypted
+		
 		
 		//batch summary
-		case 12: tranCode = data[0];
-		setIDnPas(data[1]);
-		result = getResult12();
-	
+		case 12: tranType = data[0];
+		if(!tranType.equals("CBatch") && !tranType.equals("CAllDetail") && !tranType.equals("CTranDetail") && !tranType.equals("CAllGiftDetail")){
+			tranCode = data[1];
+			setIDnPas(data[2]);
+			memo = data[3];
+			if(tranCode.equals("BatchClose")){
+				batchNo = data[4];
+				itemCount = data[5];
+				netBatch = data[6];
+				creditCount = data[7];
+				creditAmt = data[8];
+				creditRetCount = data[9];
+				creditRetAmt = data[10];
+				debitPurCount = data[11];
+				debitPurAmt = data[12];
+				debitRetCount = data[13];
+				debitRetAmt = data[14];	
+				}
+			result = getResult12();
+			}
+		else if(tranType.equals("CAllDetail") || tranType.equals("CAllGiftDetail")){
+			setIDnPas(data[1]);
+			invoiceNo = data[2];
+			startDate = data[3];
+			endDate = data[4];
+			}
+		else if(tranType.equals("CTranDetail")){
+			setIDnPas(data[1]);
+			invoiceNo = data[2];
+		}
 		}
 		System.out.println(password);
 		//System.out.println(result);
@@ -342,7 +368,8 @@ public class Response{
 	{
 		String temp = "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";
 		temp += merchantID;
-		temp += "</MerchantID>\n\t\t<OperatorID>test</OperatorID>\n\t\t<TranType>";
+		temp += "</MerchantID>";//\n\t\t<OperatorID>test</OperatorID>";
+		temp += "\n\t\t<TranType>";
 		temp += tranType;
 		temp += "</TranType>\n\t\t<TranCode>";
 		temp += tranCode;
@@ -403,12 +430,6 @@ public class Response{
 		temp += "</Purchase>\n\t\t\t<Authorize>";
 		temp += authorize;
 		temp += "</Authorize>\n\t\t</Amount>";
-		if(entryType != null){
-			if(entryType.equals("Keyed")){	
-		temp += "\n\t\t<AVS>\n\t\t\t<Address>" + addr + "</Address>";
-		temp += "\n\t\t\t<Zip>" + zip + "</Zip>\n\t\t</AVS>";
-			}
-		}
 		temp += "\n\t</Transaction>\n</TStream>";
 		
 		return temp;
@@ -522,7 +543,11 @@ public class Response{
 		temp += refNo;//"38";
 		temp += "</RefNo>\n\t\t<Memo>";
 		temp += memo;
-		temp += "</Memo>";
+		temp += "</Memo>\n\t\t<Frequency>";
+		temp += frequency;
+		temp += "</Frequency>\n\t\t<RecordNo>";
+		temp += recordNo;
+		temp += "</RecordNo>";
 		temp += "\n\t\t<Account>";
 		temp += "\n\t\t\t<EncryptedFormat>MagneSafe</EncryptedFormat>\n\t\t\t<AccountSource>Swiped</AccountSource>";
 		temp += "\n\t\t\t<EncryptedBlock>";
@@ -530,11 +555,13 @@ public class Response{
 		temp += "</EncryptedBlock>\n\t\t\t<EncryptedKey>";
 		temp += encryptedKey;
 		temp += "</EncryptedKey>\n\t\t</Account>";
-		temp += "\n<Amount>\n\t\t\t<Purchase>";
+		temp += "\n\t\t<Amount>\n\t\t\t<Purchase>";
 		temp += purchase;
-		temp += "</Purchase>\n\t\t\t<CashBack>";
-		temp += cashback;
-		temp += "</CashBack>\n\t\t</Amount>";
+		temp += "</Purchase>";
+		if(tranCode.equals("Sale")){
+			temp += "\n\t\t\t<CashBack>" + cashback + "</CashBack>";
+		}
+		temp += "\n\t\t</Amount>";
 		temp += "\n\t\t<PIN>\n\t\t\t<PINBlock>";
 		temp += encPin;
 		temp += "</PINBlock>\n\t\t\t<DervdKey>";
@@ -584,11 +611,28 @@ public class Response{
 	{
 		String temp = "<TStream>\n\t<Admin>\n\t\t<MerchantID>";
 		temp += merchantID;
-		temp += "</MerchantID>\n\t\t<TranCode>";
-		temp += tranCode;
-		temp += "</TranCode>\n\t\t<Memo>";
+		temp += "</MerchantID>";
+		if(tranCode.equals("BatchClose")){
+			temp += "\n\t\t<OperatorID>test</OperatorID>";
+		}
+		temp += "\n\t\t<TranCode>" + tranCode;
+		temp += "</TranCode>";
+		if(tranCode.equals("BatchClose")){
+			temp += "\n\t\t<BatchNo>" + batchNo + "</BatchNo>";
+			temp += "\n\t\t<BatchItemCount>" + itemCount + "</BatchItemCount>";
+			temp += "\n\t\t<NetBatchTotal>" + netBatch + "</NetBatchTotal>";
+			temp += "\n\t\t<CreditPurchaseCount>" + creditCount + "</CreditPurchaseCount>";
+			temp += "\n\t\t<CreditPurchaseAmount>" + creditAmt + "</CreditPurchaseAmount>";
+			temp += "\n\t\t<CreditReturnCount>" + creditRetCount + "</CreditReturnCount>";
+			temp += "\n\t\t<CreditReturnAmount>" + creditRetAmt + "</CreditReturnAmount>";
+			temp += "\n\t\t<DebitPurchaseCount>" + debitPurCount + "</DebitPurchaseCount>";
+			temp += "\n\t\t<DebitPurchaseAmount>" + debitPurAmt + "</DebitPurchaseAmount>";
+			temp += "\n\t\t<DebitReturnCount>" + debitRetCount + "</DebitReturnCount>";
+			temp += "\n\t\t<DebitReturnAmount>" + debitRetAmt + "</DebitReturnAmount>";
+		}
+		temp += "\n\t\t<Memo>";
 		temp += memo;
-		temp += "</Memo>\n\t\t</Admin>";
+		temp += "</Memo>\n\t</Admin>";
 		temp += "\n</TStream>";
 		
 		return temp;
@@ -626,12 +670,6 @@ public class Response{
 			temp += "\n\t\t<Amount>\n\t\t\t<Purchase>";
 			temp += purchase;
 			temp += "</Purchase>\n\t\t</Amount>";
-			if(entryType != null){
-				if(entryType.equals("Keyed")){
-					temp += "\n\t\t<AVS>\n\t\t\t<Address>" + addr + "</Address>";
-					temp += "\n\t\t\t<Zip>" + zip + "</Zip>\n\t\t</AVS>";
-				}
-			}
 			temp += "\n\t</Transaction>\n</TStream>";
 			
 			return temp;
@@ -643,15 +681,45 @@ public class Response{
 		try {
 			MercuryWebRequest test = new MercuryWebRequest(webURL);
 			//if(!batch)
+			if(!tranType.equals("CBatch") && !tranType.equals("CAllDetail") && !tranType.equals("CTranDetail")  && !tranType.equals("CAllGiftDetail")){
 				test.addParameter("tran", result);
+				test.addParameter("pw", /*"123TOKEN""xyz" */password);
+			}
+			else if(tranType.equals("CBatch")){
+				test.addParameter("merchant", merchantID);
+			}
+			else if(tranType.equals("CAllDetail") || tranType.equals("CAllGiftDetail")){
+				test.addParameter("merchant", merchantID);
+				test.addParameter("pw", password);
+				test.addParameter("invoice", invoiceNo);
+				test.addParameter("startdate", startDate);
+				test.addParameter("enddate", endDate);
+			}
+			else if(tranType.equals("CTranDetail")){
+				test.addParameter("merchant", merchantID);
+				test.addParameter("pw", password);
+				test.addParameter("invoice", invoiceNo);
+
+			}
 			//else
 				//test.addParameter("merchant", merchantID);
 			
 			System.out.println(password);
 			//test.addParameter("merchant", merchantID);
-			test.addParameter("pw", /*"123TOKEN""xyz" */password);
-			if(tranType.equals("Credit")){
+			if(tranType.equals("Credit") || tranType.equals("Debit")){
 				test.setWebMethodName("CreditTransaction");
+			}
+			else if(tranType.equals("CBatch")){
+				test.setWebMethodName("CBatch");
+			}
+			else if(tranType.equals("CAllDetail")){
+				test.setWebMethodName("CAllDetail");
+			}
+			else if(tranType.equals("CAllGiftDetail")){
+				test.setWebMethodName("CAllGiftDetail");
+			}
+			else if(tranType.equals("CTranDetail")){
+				test.setWebMethodName("CTranDetail");
 			}
 			else{
 				test.setWebMethodName("GiftTransaction");
@@ -663,11 +731,13 @@ public class Response{
 
 			//
 			test.setTimeout(timeout);
-			String response = test.sendRequest();
+			String []response = test.sendRequest();
+			soap = response[1];
+			soap = soap.replaceAll(">", ">\n");
 			//JOptionPane.showMessageDialog(null, response);
-			if(response.contains("\t")){
-			this.response = response.replaceAll(">\t", ">\n\t");}
-			else{this.response = response.replaceAll("><", ">\n\t<").replaceAll("> {3,6}", ">\n\t");}
+			if(response[0].contains("\t")){
+			this.response = response[0].replaceAll(">\t", ">\n\t");}
+			else{this.response = response[0].replaceAll("><", ">\n\t<").replaceAll("> {3,6}", ">\n\t");}
 			//System.out.println(response.replaceAll(">\t", ">\n\t"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -708,5 +778,9 @@ public class Response{
 	
 	public String getXML() {
 		return this.result;
+	}
+	
+	public String getSoap(){
+		return this.soap;
 	}
 }

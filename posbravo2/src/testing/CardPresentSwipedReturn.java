@@ -21,8 +21,8 @@ public class CardPresentSwipedReturn {
 		m1.find();
 		
 //case#1 Return
-	/*	//Return
-		String ret[] = {"42", "42", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "4.02", "4.02", "Swiped"};
+		//Return
+/*		String ret[] = {"61", "61", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "4.02", "4.02", "Swiped"};
 		
 		Response test = new Response(8, ret);
 		
@@ -32,8 +32,8 @@ public class CardPresentSwipedReturn {
 	*/
 //case#2 Return/VoidReturn
 		
-/*		//Return
-		String ret[] = {"43", "43", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "4.03", "4.03", "Swiped"};
+		//Return
+		String ret[] = {"62", "62", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "4.03", "4.03", "Swiped"};
 		
 		Response test = new Response(8, ret);
 		
@@ -43,14 +43,14 @@ public class CardPresentSwipedReturn {
 		
 		//VoidReturn
 		String [] info2 = resExtract.getCodes(test.getResponse());
-		String vdret[] = {"43", info2[1], "POS BRAVO v1.0", info2[2], "4.03", info2[0], "merchantID2"};
+		String vdret[] = {"63", info2[1], "POS BRAVO v1.0", info2[2], "4.03", info2[0], "merchantID2"};
 		
 		test = new Response(9, vdret);
 		
 		System.out.println(test.getXML());
 		System.out.println(test.getResponse());
 		System.out.println("____________________________________________");
-		*/
+		
 	}
 	
 }

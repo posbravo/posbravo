@@ -23,7 +23,7 @@ public class CardPresentSwipedPreAuth {
 //case#4 PreAuth/Reversal Voidsale/PreAuthCapture/Voidsale		
 	
 		//PreAuth Encrypted
-/*		String one[] = {"36", "36", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "24.01", "24.01", "1234", "1661 E. Camelback", "85016", "Swiped"};
+		String one[] = {"51", "51", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "24.01", "24.01", "Swiped"};
 		
 		Response test = new Response(4, one);
 
@@ -34,7 +34,7 @@ public class CardPresentSwipedPreAuth {
 		//Reversal Voidsale
 		String [] info2 = getCodes(test.getResponse());
 				
-		String three[] = {"36", "36", "POS BRAVO v1.0", info2[2], "24.01", info2[3], info2[4], info2[0], "merchantID2" };
+		String three[] = {"52", "52", "POS BRAVO v1.0", info2[2], "24.01", info2[3], info2[4], info2[0], "merchantID2" };
 
 		test = new Response(3, three);
 				
@@ -44,7 +44,7 @@ public class CardPresentSwipedPreAuth {
 				
 		
 		//PreAuth Capture		
-		String two[] = {"36", "36", info2[2], "24.01", "24.01", "", info2[0], info2[3]};
+		String two[] = {"51", "51", info2[2], "24.01", "24.01", "", info2[0], info2[3]};
 		
 		test = new Response(2, two);
 		
@@ -56,17 +56,17 @@ public class CardPresentSwipedPreAuth {
 		//Standard Voidsale
 		info2 = getCodes(test.getResponse());
 
-		String three2[] = {"36", info2[1], "POS BRAVO v1.0", info2[2], "24.01", info2[3], info2[4], info2[0], "merchantID2" };
+		String three2[] = {"53", info2[1], "POS BRAVO v1.0", info2[2], "24.01", info2[3], info2[4], info2[0], "merchantID2" };
 
 		test = new Response(5, three2);
 		
 		System.out.println(test.getXML());
 		System.out.println(test.getResponse());
 		System.out.println("____________________________________________");
-*/
+
 //case#5 PreAuth/PreAuthCapture/Adjust/VoidSale
-/*		//PreAuth Encrypted
-		String one[] = {"37", "37", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "3.05", "3.05", "1234", "1661 E. Camelback", "85016", "Swiped"};
+		//PreAuth Encrypted
+/*		String one[] = {"54", "54", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "3.05", "3.05", "Swiped"};
 				
 		Response test = new Response(4, one);
 
@@ -77,7 +77,7 @@ public class CardPresentSwipedPreAuth {
 		//PreAuth Capture
 		String [] info2 = getCodes(test.getResponse());
 		
-		String two[] = {"37", "37", info2[2], "3.05", "3.05", "", info2[0], info2[3]};
+		String two[] = {"54", "54", info2[2], "3.05", "3.05", "", info2[0], info2[3]};
 		
 		test = new Response(2, two);
 		
@@ -87,7 +87,7 @@ public class CardPresentSwipedPreAuth {
 		
 		//Adjust
 		String [] info = getCodes(test.getResponse());
-		String []adj = new String[]{"37", info[1], "POS BRAVO v1.0", info[2], "3.50", "3.50", "", info[0], "merchantID2"};
+		String []adj = new String[]{"54", info[1], "POS BRAVO v1.0", info[2], "3.50", "3.50", "", info[0], "merchantID2"};
 		
 		test = new Response(7, adj);
 
@@ -99,7 +99,7 @@ public class CardPresentSwipedPreAuth {
 		//Standard Voidsale
 		info2 = getCodes(test.getResponse());
 
-		String three2[] = {"37", info2[1], "POS BRAVO v1.0", info2[2], "3.50", info2[3], info2[4], info2[0], "merchantID2" };
+		String three2[] = {"55", info2[1], "POS BRAVO v1.0", info2[2], "3.50", info2[3], info2[4], info2[0], "merchantID2" };
 
 		test = new Response(5, three2);
 		
@@ -109,8 +109,8 @@ public class CardPresentSwipedPreAuth {
 		*/
 //case#6 PreAuth/PreAuthCapture/Adjust Gratuity/Voidsale
 		
-/*		//PreAuth Encrypted
-		String one[] = {"38", "38", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "3.06", "3.06", "1234", "1661 E. Camelback", "85016", "Swiped"};
+		//PreAuth Encrypted
+/*		String one[] = {"56", "56", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "3.06", "3.06", "Swiped"};
 				
 		Response test = new Response(4, one);
 
@@ -121,7 +121,7 @@ public class CardPresentSwipedPreAuth {
 		//PreAuth Capture
 		String [] info2 = getCodes(test.getResponse());
 		
-		String two[] = {"38", "38", info2[2], "3.06", "3.06", "0.60", info2[0], info2[3]};
+		String two[] = {"56", "56", info2[2], "3.06", "3.06", "0.60", info2[0], info2[3]};
 		
 		test = new Response(2, two);
 		
@@ -131,7 +131,7 @@ public class CardPresentSwipedPreAuth {
 		
 		//Adjust
 		String [] info = getCodes(test.getResponse());
-		String []adj = new String[]{"38", info[1], "POS BRAVO v1.0", info[2], "3.06", "3.06", "1.00", info[0], "merchantID2"};
+		String []adj = new String[]{"56", info[1], "POS BRAVO v1.0", info[2], "3.06", "3.06", "1.00", info[0], "merchantID2"};
 		
 		test = new Response(7, adj);
 
@@ -143,7 +143,7 @@ public class CardPresentSwipedPreAuth {
 		//Standard Voidsale
 		info2 = getCodes(test.getResponse());
 
-		String three2[] = {"38", info2[1], "POS BRAVO v1.0", info2[2], "4.06", info2[3], info2[4], info2[0], "merchantID2" };
+		String three2[] = {"57", info2[1], "POS BRAVO v1.0", info2[2], "4.06", info2[3], info2[4], info2[0], "merchantID2" };
 
 		test = new Response(5, three2);
 		
@@ -153,8 +153,8 @@ public class CardPresentSwipedPreAuth {
 */
 //case#7 PreAuth/PreAuth/PreAuthCapture/PreAuthCapture
 		
-/*		//PreAuth Encrypted
-		String one[] = {"39", "39", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "23.54", "23.54", "1234", "1661 E. Camelback", "85016", "Swiped"};
+		//PreAuth Encrypted
+/*		String one[] = {"58", "58", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "23.54", "23.54", "Swiped"};
 						
 		Response test = new Response(4, one);
 
@@ -165,7 +165,7 @@ public class CardPresentSwipedPreAuth {
 		String [] info2 = getCodes(test.getResponse());//For PreAuthCapture 39
 		
 		//PreAuth Encrypted
-		String one2[] = {"40", "40", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "3.54", "3.54", "1234", "1661 E. Camelback", "85016", "Swiped"};
+		String one2[] = {"59", "59", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "3.54", "3.54", "Swiped"};
 						
 		test = new Response(4, one2);
 
@@ -178,7 +178,7 @@ public class CardPresentSwipedPreAuth {
 		
 		//PreAuth Capture
 		
-		String two[] = {"39", "39", info2[2], "20.00", "20.00", "0.00", info2[0], info2[3]};
+		String two[] = {"58", "58", info2[2], "20.00", "20.00", "0.00", info2[0], info2[3]};
 		
 		test = new Response(2, two);
 		
@@ -188,17 +188,17 @@ public class CardPresentSwipedPreAuth {
 		
 		//PreAuth Capture
 		
-		String two2[] = {"40", "40", info[2], "3.54", "3.54", "0.00", info[0], info[3]};
+		String two2[] = {"59", "59", info[2], "3.54", "3.54", "0.00", info[0], info[3]};
 		
 		test = new Response(2, two2);
 		
 		System.out.println(test.getXML());
 		System.out.println(test.getResponse());
 		System.out.println("____________________________________________");	
-	*/	
+		*/
 //case#8 PreAuth/Reversal Voidsale
-	/*	//PreAuth Encrypted
-		String one[] = {"41", "41", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "23.54", "23.54", "1234", "1661 E. Camelback", "85016", "Swiped"};
+		//PreAuth Encrypted
+/*		String one[] = {"60", "60", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "23.54", "23.54", "Swiped"};
 								
 		Response test = new Response(4, one);
 
@@ -209,7 +209,7 @@ public class CardPresentSwipedPreAuth {
 		//Reversal Voidsale
 		String [] info2 = getCodes(test.getResponse());
 						
-		String three[] = {"41", "41", "POS BRAVO v1.0", info2[2], "20.00", info2[3], info2[4], info2[0], "merchantID2" };
+		String three[] = {"61", "61", "POS BRAVO v1.0", info2[2], "20.00", info2[3], info2[4], info2[0], "merchantID2" };
 
 		test = new Response(3, three);
 						
