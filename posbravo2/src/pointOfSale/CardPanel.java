@@ -292,8 +292,11 @@ public class CardPanel extends JPanel implements ActionListener {
 								tabStrings[0], tabStrings[4], tabStrings[5],
 								tabStrings[6] };
 						response1 = new Response(1, one);*/
-						String data [] = {getInvoiceNo() + "", getInvoiceNo() + "", "recordNo", tabStrings[0], tabStrings[0], "1.00", "authCode", "acqrefData", "merchantID2"};
-						Response res = new Response();
+						
+						// PreAuth 
+						String temp = CardProcess.getTrack(swipe);
+						String data [] = {"", getInvoiceNo() + "", getInvoiceNo() + "", "POS BRAVO v1.0", temp, tabStrings[0], tabStrings[0], "merchantID2"};
+						Response res = new Response(1, data);
 						processXML(res);
 
 					} else {
