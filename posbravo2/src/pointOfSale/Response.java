@@ -36,22 +36,70 @@ public class Response{
 	{
 		onLoad();
 		this.type = type__;
+		replaceID(data);
 		switch(type)
 		{
-		case 1: tranCode = "PreAuth";
+		//Credit
+		case 1: //PreAuth/Return Plain
+		case 2: //PreAuth/Return Encrypted
+		case 3: //PreAuthCapture
+		case 4: //VoidSale/Reversal/VoidReturn
+		case 5: //Sale
+		case 6: //Adjust
+			ResponseCredit resCre = new ResponseCredit(type, data);
+			result = resCre.getXML();
+			break;
+			
+		//Debit	
+		case 7: //Sale/Return  
+			ResponseDebit resDeb = new ResponseDebit(type, data);
+			result = resDeb.getXML();
+			break;
+			
+		//Gift
+		case 8: //Balance/Issue/Sale/Nonfsale/Return/Reload/VoidSale/VoidReturn/VoidReload
+			ResponseGift resGift = new ResponseGift(type, data);
+			result = resGift.getXML();
+			break;
+			
+		//Batch
+		case 9: //BatchSummary/BatchClose/CBatch/CAllDetail/CAllGiftDetail/CTranDetail
+			tranType = data[0];
+			if (!tranType.equals("CBatch") && !tranType.equals("CAllDetail")
+					&& !tranType.equals("CTranDetail")
+					&& !tranType.equals("CAllGiftDetail")) {
+				tranCode = data[1];
+				memo = data[2];
+				if (tranCode.equals("BatchClose")) {
+					batchNo = data[4];
+					itemCount = data[5];
+					netBatch = data[6];
+					creditCount = data[7];
+					creditAmt = data[8];
+					creditRetCount = data[9];
+					creditRetAmt = data[10];
+					debitPurCount = data[11];
+					debitPurAmt = data[12];
+					debitRetCount = data[13];
+					debitRetAmt = data[14];
+				}
+				result = getResult12();
+			} else if (tranType.equals("CAllDetail")
+					|| tranType.equals("CAllGiftDetail")) {
+				invoiceNo = data[1];
+				startDate = data[2];
+				endDate = data[3];
+			} else if (tranType.equals("CTranDetail")) {
+				invoiceNo = data[1];
+			}
+		/*case 1: tranCode = "PreAuth";
 			invoiceNo = data[0];
 			refNo = data[1];
 			memo = data[2];
 			recordNo = "RecordNumberRequested";
-			//accountNum = data[3];
-			//expDate = data[4];
 			track2 = data[3];
 			purchase = data[4];
 			authorize = data[5];
-			//gratuity = "0.0";
-			//cvv = data[7];
-			//addr = data[8];
-			//zip = data[9];
 			result = getResult1();
 			break;
 		case 2: tranCode = "PreAuthCaptureByRecordNo";
@@ -254,6 +302,7 @@ public class Response{
 			setIDnPas(data[1]);
 			invoiceNo = data[2];
 		}
+		*/
 		}
 		System.out.println(password);
 		//System.out.println(result);
@@ -293,7 +342,7 @@ public class Response{
 	 
 	 //<?xml version="1.0"?> <TStream>  <Transaction>   <MerchantID>395347308=E2ETKN</MerchantID>   <TranType>Credit</TranType>   <TranCode>PreAuth</TranCode>   <InvoiceNo>16</InvoiceNo>   <RefNo>16</RefNo> //use RefNo=InvoiceNo on PreAuth requests   <Memo>MPS Example XML v1.0</Memo>         <PartialAuth>Allow</PartialAuth> //Required to "Allow" partial approvals   <Frequency>OneTime</Frequency> //use to request a Token for "one time" use(6 months)   <RecordNo>RecordNumberRequested</RecordNo>   <Account> //use for encrypted data elements in place of Track1 or Track2    <EncryptedFormat>MagneSafe</EncryptedFormat>   <AccountSource>Swiped</AccountSource>   <EncryptedBlock>F40DDBA1F645CC8DB85A6459D45AFF8002C244A0F74402B479 ABC9915EC9567C81BE99CE4483AF3D</EncryptedBlock> //for E2E (P2PE), always use Track2 block <EncryptedKey>9012090B01C4F200002B</EncryptedKey>  </Account>   <Amount>    <Purchase>2.00</Purchase> //Purchase=Authorize on request    <Authorize>2.00</Authorize>   </Amount>  </Transaction> </TStream> 
 	
-	private String getResult1()
+	/*private String getResult1()
 	{
 		String temp = "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";
 		temp += merchantID;
@@ -319,7 +368,7 @@ public class Response{
 		temp += track2;//accountNum;
 		temp += "</Track2>"; //"</AcctNo>\n\t\t\t<ExpDate>";
 		//temp += expDate;
-		temp += /*</ExpDate>*/"\n\t\t</Account>\n\t\t<Amount>\n\t\t\t<Purchase>";
+		temp += /*</ExpDate>*//*"\n\t\t</Account>\n\t\t<Amount>\n\t\t\t<Purchase>";
 		temp += purchase;
 		temp += "</Purchase>\n\t\t\t<Authorize>";
 		temp += authorize;
@@ -366,7 +415,7 @@ public class Response{
 	{
 		String temp = "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";
 		temp += merchantID;
-		temp += "</MerchantID>";//\n\t\t<OperatorID>test</OperatorID>";
+		temp += "</MerchantID>\n\t\t<OperatorID>test</OperatorID>";
 		temp += "\n\t\t<TranType>";
 		temp += tranType;
 		temp += "</TranType>\n\t\t<TranCode>";
@@ -437,7 +486,7 @@ public class Response{
 	{
 		String temp = "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";
 		temp += merchantID;
-		temp += "</MerchantID>\n\t\t<TranType>";
+		temp += "</MerchantID>\n\t\t<OperatorID>test</OperatorID>\n\t\t<TranType>";
 		temp += tranType;
 		temp += "</TranType>\n\t\t<TranCode>";
 		temp += tranCode;
@@ -501,7 +550,7 @@ public class Response{
 	{
 		String temp = "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";
 		temp += merchantID;
-		temp += "</MerchantID>\n\t\t<TranType>";
+		temp += "</MerchantID>\n\t\t<OperatorID>test</OperatorID>\n\t\t<TranType>";
 		temp += tranType;
 		temp += "</TranType>\n\t\t<TranCode>";
 		temp += tranCode;
@@ -604,7 +653,7 @@ public class Response{
 		temp+= "\n\t</Transaction>\n</TStream>";
 		
 		return temp;
-	}
+	}*/
 	private String getResult12()
 	{
 		String temp = "<TStream>\n\t<Admin>\n\t\t<MerchantID>";
@@ -636,6 +685,7 @@ public class Response{
 		return temp;
 	}
 	//for magtek ipad 100kb Credit Sale
+	/*
 		private String getResult13()
 		{
 			String temp = "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";
@@ -672,7 +722,7 @@ public class Response{
 			
 			return temp;
 		}
-
+*/
 	
 	public void send()
 	{
@@ -756,7 +806,7 @@ public class Response{
 		
 		
 	}
-	public void setIDnPas(String id){
+	private void setIDnPas(String id){
 		initProperties();
 		//for voidsale, reference appropriate ids based on merchantID on the sent receipt 
 		if(id.equals("395347306=TOKEN")){
@@ -773,6 +823,18 @@ public class Response{
 		temp = "password" + temp;
 		this.password = properties.getProperty(temp);
 		System.out.println(password);
+		
+	}
+	private void replaceID(String [] data){
+		
+		String temp = null;
+		for(int x = 0; x < data.length; x++){
+			if(data[x].contains("merchant")){
+				setIDnPas(data[x]);
+				data[x] = this.merchantID;
+				return;
+			}
+		}
 		
 	}
 	public String getResponse() {

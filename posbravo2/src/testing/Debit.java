@@ -30,17 +30,17 @@ public class Debit {
 		//#6
 		String card2 = "0~IPAD100KB|24~98AC18281702140C|1~21|2~640C5555178FB6F17692AC159C3DD5655C4A25972F8AEE79B6F15FE405486CD7B9557283E543F79684B31276654893C3|3~BC96BB8FCFBBE57870A52D292ACA3B78291AD19D4080E25E031BF0EC4494D6D0558F26DC36910C93|4~|5~96761B085538D6C5A6AF90ECD47D9414D37B6784837C29FC8E0378748B74A0C91D667727C7CAA576D803122378C9E45A1606D14349320789|6~%B5439750002000248^TEST/MPS^15120000000000000?|7~;5439750002000248=15120000000000000000?|8~|9~00000000|10~000001|11~9500030000081C2000D1|12~00002200|13~FFFF3D0100002C200003|14~7828278B747E10B2|";
 		Pattern pregex4 = Pattern.compile("3~.*\\|4"); //encrypted card data
-		Matcher m4 = pregex4.matcher(card);
+		Matcher m4 = pregex4.matcher(card2);
 		m4.find();
 		Pattern pregex5 = Pattern.compile("11~.*\\|12"); //encrypted key
-		Matcher m5 = pregex5.matcher(card);
+		Matcher m5 = pregex5.matcher(card2);
 		m5.find();
 		System.out.println(m.group());
 		Pattern pregex6 = Pattern.compile("13~.*\\|14"); //encrypted pin key
-		Matcher m6 = pregex6.matcher(card);
+		Matcher m6 = pregex6.matcher(card2);
 		m6.find();
 		Pattern pregex7 = Pattern.compile("14~.*\\|"); //encrypted key
-		Matcher m7 = pregex7.matcher(card);
+		Matcher m7 = pregex7.matcher(card2);
 		m7.find();
 		
 	/*	String ten[] = {"Sale", "84", "84", "POS BRAVO v1.0", card2.substring(m5.start()+3, m5.end()-3), card2.substring(m4.start()+2, m4.end()-2), "23.28", "", card2.substring(m7.start()+3, m7.end()-1), card2.substring(m6.start()+7, m6.end()-3)};

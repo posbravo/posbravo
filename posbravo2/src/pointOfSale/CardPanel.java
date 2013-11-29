@@ -65,7 +65,6 @@ public class CardPanel extends JPanel implements ActionListener {
 	private static boolean loaded = false;
 	private static boolean backspace = false;
 	private static boolean voidsale = false;
-	private static boolean debit = false;
 	private static String temp = "";
 
 	private static MenuButton one = null;
@@ -232,38 +231,54 @@ public class CardPanel extends JPanel implements ActionListener {
 			}
 			
 		}
+
 		public void keyTyped(KeyEvent e) {
-			Response response1 = null;
+			//Response response1 = null;
 
 			if (e.getKeyChar() == '\n') {
 				// switch for generics or encrypted mag reader
-				
-				String readerType = checkReader(swipe, response1);
-				swipe = "";
-				if (readerType.equals("IPAD100KB")) { 	
-					if(debit){
-					String [] ten = { 	"1"/*		invoiceNo,
-					refNo,
-					memo,
-					encryptedKey,
-					encryptedBlock,
-					purchase,
-					cashback,
-					encPin,
-					dervk,*/
-					};
-						response1 = new Response(10, ten);
+				String readerType = checkReader(swipe);
+				if (readerType.equals("IPAD100KB")) {
+					Response res = null;
+					String temp[] = null;
+					String[] data = null;
+					if (true/* credit */) {
+						// PreAuth
+						temp = CardProcess.getEncryption(swipe, false);
+						data = new String[] { "", getInvoiceNo() + "",
+								getInvoiceNo() + "", "POS BRAVO v1.0", temp[2],
+								temp[1], tabStrings[0], tabStrings[0], temp[0],
+								"merchantID2" };
+						res = new Response(2, data);
+					} else if (true/* debit */) {
+						// Sale
+						temp = CardProcess.getEncryption(swipe, true);
+						data = new String[] { "Sale", getInvoiceNo() + "",
+								getInvoiceNo() + "", "POS BRAVO v1.0", temp[2],
+								temp[1], tabStrings[0], "", temp[4], temp[3],
+								"merchantID2" };
+						res = new Response(7, data);
+					} else if (true/* gift */) {
+						// Issue
+						temp = CardProcess.getEncryption(swipe, false);
+						data = new String[] { temp[0], "Issue", "merchantID2",
+								getInvoiceNo() + "", getInvoiceNo() + "",
+								"POS BRAVO v1.0", temp[2], temp[1],
+								tabStrings[0] };
+						res = new Response(8, data);
 					}
-					else{
-					String[] four = { getInvoiceNo() + "", getInvoiceNo() + "",
-							"POS BRAVO v1.0", tabStrings[2], tabStrings[3],
-							tabStrings[0], tabStrings[0], tabStrings[4], tabStrings[5], tabStrings[6] };
-					response1 = new Response(4, four);
-					}
-					processXML(response1);
+					processXML(res);
+				}
 
-				
-				} else {
+				/*
+				 * String[] four = { getInvoiceNo() + "", getInvoiceNo() + "",
+				 * "POS BRAVO v1.0", tabStrings[2], tabStrings[3],
+				 * tabStrings[0], tabStrings[0], tabStrings[4], tabStrings[5],
+				 * tabStrings[6] };
+				 */
+				// response1 = new Response(4, four);
+
+				else {
 					if (firstLine.equalsIgnoreCase("OPEN")
 							&& validate(tabStrings[2], tabStrings[3])) {
 						// get response
@@ -271,29 +286,29 @@ public class CardPanel extends JPanel implements ActionListener {
 						// "9500030000081C20001A",
 						// "2B11F45ABEE6A6B288A76FED3BBCCE63130970C742BDD607D75F09821AAF2C6482F1AB593E0A97BA",
 						// "2.00", "2.00"};
-						String[] one = { getInvoiceNo() + "",
+						/*String[] one = { getInvoiceNo() + "",
 								getInvoiceNo() + "", "POS BRAVO v1.0",
 								tabStrings[2], tabStrings[3], tabStrings[0],
-								tabStrings[0], tabStrings[4], tabStrings[5], tabStrings[6] };
-						response1 = new Response(1, one);
-						processXML(response1);
+								tabStrings[0], tabStrings[4], tabStrings[5],
+								tabStrings[6] };
+						response1 = new Response(1, one);*/
+						String data [] = {getInvoiceNo() + "", getInvoiceNo() + "", "recordNo", tabStrings[0], tabStrings[0], "1.00", "authCode", "acqrefData", "merchantID2"};
+						Response res = new Response();
+						processXML(res);
 
-						
-					
 					} else {
 						if (!validate(tabStrings[2], tabStrings[3])) {
 							display.setText("Expired Card");
 							reject = true;
 							timer.start();
-						
+
 						}
 
 						else if (!firstLine.equalsIgnoreCase("OPEN")) {
 							display.setText("Closed Ticket");
 							reject = true;
 							timer.start();
-							
-					
+
 						}
 					}
 					// System.out.println(tabStrings[2]);
@@ -301,113 +316,109 @@ public class CardPanel extends JPanel implements ActionListener {
 			} else {
 				String check = String.valueOf(e.getKeyChar());
 				boolean cond = (e.getKeyChar() == KeyEvent.VK_BACK_SPACE);
-				if(!tipButton.isVisible()){
-				
-				System.out.println(check);
-				swipe += check;
-				if(deleter > 0){
-		    		int temp = current.length();
-		    		System.out.println("deleter = " + deleter + " current = " + temp );
-		    		if(deleter > temp){
-		    			display.setText(tabText[selection]);
-		    			current = "";
-		    			//deleter = deleter - tabText[selection].length();
-		    		}
-		    		else{
-		    			current = current.substring(0, temp - deleter);
-		    		}
-		    		System.out.print("current = s" + current + "deleter = " + deleter );
-		    		deleter = 0;
-		    		cond = false;
-		    	}
-				if(!(e.getKeyChar() == KeyEvent.VK_BACK_SPACE)){
-					current += check;		
-				}
-				/*if(check.matches("[0-9]")){
-					
-					current += check;
-					
-				}
-				else if(selection == 5){
-					if(!(e.getKeyChar() == KeyEvent.VK_BACK_SPACE)){
-					current += check;
-					}
-				}*/
-			
-				
-		    	
-			    if(current.length() > 0 && cond){
-			    	
-			    	    
-				    	current = current.substring(0, current.length()-1);
-			    	
-			    }
-			    
-			    
-					/*if(check.matches("[0-9]")){
-						
-					
-					}*/
+				if (!tipButton.isVisible()) {
 
-			//	return;
-				
-				
-				
-				//current = swipe;
-			}
-			//backspace = true;
-				else{
-					if(deleter > 0){
-
-						return;
-					}
-					
-				    Scanner run = new Scanner(display.getText() + " ");
-				    run.useDelimiter(": ");
-				    String temp = "";
-				    while(run.hasNext()){
-				    	temp = run.next();
-				    }
-				    run.close();
-				    System.out.println("counter: = " + counter + " condition = " + (temp.length() == current.length()) + " temp = " + temp + "current = " + current);
-					if(cond){
-					  if((temp.length() == current.length())){
-						if(counter > 0){
-						counter--;
+					System.out.println(check);
+					swipe += check;
+					if (deleter > 0) {
+						int temp = current.length();
+						System.out.println("deleter = " + deleter
+								+ " current = " + temp);
+						if (deleter > temp) {
+							display.setText(tabText[selection]);
+							current = "";
+							// deleter = deleter - tabText[selection].length();
+						} else {
+							current = current.substring(0, temp - deleter);
 						}
-						current = current.substring(0, current.length()-1);
-						System.out.println(current);
-					  }
+						System.out.print("current = s" + current + "deleter = "
+								+ deleter);
+						deleter = 0;
+						cond = false;
+					}
+					if (!(e.getKeyChar() == KeyEvent.VK_BACK_SPACE)) {
+						current += check;
+					}
+					/*
+					 * if(check.matches("[0-9]")){
+					 * 
+					 * current += check;
+					 * 
+					 * } else if(selection == 5){ if(!(e.getKeyChar() ==
+					 * KeyEvent.VK_BACK_SPACE)){ current += check; } }
+					 */
+
+					if (current.length() > 0 && cond) {
+
+						current = current.substring(0, current.length() - 1);
+
+					}
+
+					/*
+					 * if(check.matches("[0-9]")){
+					 * 
+					 * 
+					 * }
+					 */
+
+					// return;
+
+					// current = swipe;
+				}
+				// backspace = true;
+				else {
+					if (deleter > 0) {
+
 						return;
-					}	
-					if(counter < 2){
-						if(check.matches("[0-9.]")){
+					}
+
+					Scanner run = new Scanner(display.getText() + " ");
+					run.useDelimiter(": ");
+					String temp = "";
+					while (run.hasNext()) {
+						temp = run.next();
+					}
+					run.close();
+					System.out.println("counter: = " + counter
+							+ " condition = "
+							+ (temp.length() == current.length()) + " temp = "
+							+ temp + "current = " + current);
+					if (cond) {
+						if ((temp.length() == current.length())) {
+							if (counter > 0) {
+								counter--;
+							}
+							current = current
+									.substring(0, current.length() - 1);
+							System.out.println(current);
+						}
+						return;
+					}
+					if (counter < 2) {
+						if (check.matches("[0-9.]")) {
 							boolean condtem = check.equals(".");
-							if(!condtem && !current.contains(".")){
+							if (!condtem && !current.contains(".")) {
 								current += check;
-								
-							}
-							else if(condtem && !current.contains(".")){
-							current += check;
-							counter = 0;
-							}
-							else if(!condtem){ 
+
+							} else if (condtem && !current.contains(".")) {
+								current += check;
+								counter = 0;
+							} else if (!condtem) {
 								counter++;
-								current += check;		
+								current += check;
 							}
-							
-						}
-						else{
+
+						} else {
 							backspace = true;
 						}
-					}
-					else{
+					} else {
 						backspace = true;
 					}
-				System.out.println(current);}
+					System.out.println(current);
+				}
 			}
 		}
-	  
+
 	}
 
 	private void processXML(Response response1) {
@@ -497,7 +508,7 @@ public class CardPanel extends JPanel implements ActionListener {
 		
 		String cardType = temp.substring(2, 3);
 		
-		if(cardType.equals("2")){
+		/*if(cardType.equals("2")){
 			debit = true;
 			regex.close();
 			regex = new Scanner(swipe);
@@ -507,7 +518,7 @@ public class CardPanel extends JPanel implements ActionListener {
 			regex = new Scanner(swipe);
 			temp.replace(0, temp.length(), regex.findInLine("14~.*\\|"));
 			tabStrings[pin] = temp.substring(3, temp.length()-1);
-		}
+		}*/
 		
 		System.out.println(temp);
 		// String[] firstsplit = swipe.split("\\|");
@@ -709,7 +720,7 @@ public class CardPanel extends JPanel implements ActionListener {
 				break;
 			case 16:
 				Response response1 = new Response();
-				response1.setIDnPas("merchantID1");
+				//response1.setIDnPas("merchantID1");
 				tabStrings[selection] = current;
 				
 				System.out.println("Done************");
@@ -1453,8 +1464,8 @@ public class CardPanel extends JPanel implements ActionListener {
 
 	}
 
-	public static String checkReader(String swipe, Response res) {
-		res = new Response();
+	public static String checkReader(String swipe) {
+		//res = new Response();
 
 		swipe = swipe.substring(2, 11);
 		
@@ -1462,17 +1473,18 @@ public class CardPanel extends JPanel implements ActionListener {
 		switch (swipe) {
 		case "IPAD100KB":
 			retrn = "IPAD100KB";
-			res.setIDnPas("merchantID2");
+			
+			//res.setIDnPas("merchantID2");
 
 			System.out.println("sent encrypted");
 			// set merchantID and password
-			parseSwipeE();
+			//parseSwipeE();
 			return retrn;
 		default:
 			retrn = "nonecrypted";
-			res.setIDnPas("merchantID1");
+			//res.setIDnPas("merchantID1");
 			System.out.println("sent not encrypted");
-			parseSwipe();
+			//parseSwipe();
 			return retrn;
 		}
 	}

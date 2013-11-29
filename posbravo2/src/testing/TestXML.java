@@ -11,13 +11,13 @@ import pointOfSale.*;
 public class TestXML {
 
 	public static void main(String[] args) {
-		String a = null;
+		/*String a = null;
 		if(a == null){
 			if(a.equals("a") || a == null){
 				System.out.print("Works");
 			}
 		}
-		if(true)return;
+		if(true)return;*/
 		/*String checker [] = new String [9];
 		checker[3] = "22.26";
 		checker[8] = "30.25";
@@ -34,8 +34,28 @@ public class TestXML {
 		//	System.out.println("IT WORKS");
 		//	return;
 		//}
+		String swipe1 = "0~IPAD100KB|24~98AC18281702140C|1~33|2~EC5A3972BE3A7DD16559861151BAE7C5F961B63D9ED7076DF0C835F873FA9E48ABD0535C751C322E8EA493ED015F7A0DF3312600C8C4AA9E|3~FD1E93B24B1F14EC989506E6CC04E1C360948EDEC23FFBAFE724DD4C04B847D3E243466E7738ABCC|4~|6~%M4005550000000480^MANUAL ENTRY/^1512000000000000000?|7~;4005550000000480=1512000000000000?|8~|9~00000000|10~000001|11~9500030000081C2000CB|12~00000000|";
+		String temp1[] = {""};
+		if(swipe1.contains("MANUAL ENTRY")){
+			temp1[0] = "True";
+		}
+		else{
+			temp1[0] = "False";
+		}
+		System.out.print(temp1[0]);
+		if(true)return;
+		
+		String swipe = ";12312313=1231231?asfafasf";
+		Scanner regex = new Scanner(swipe);
+		System.out.println(swipe);
+		String temp = regex.findInLine(";\\d+=\\d+\\?");
+		System.out.println(temp);
+		temp = temp.substring(1, temp.length()-1);
+		System.out.println(temp);
+		
+if(true)return;
 		String ref = "0";
-		/*String card = "0~IPAD100KB|24~98AC18281702140C|1~33|2~2EE099E348918FB1BBFF1D5C0FEAEBA1FE02E62B303661AE804C5233A225A716D674C685DC92C0B9D3AD2BA2F1307063EFBB168239C98836|3~9E7952E11A1230CC702D7AA11BFB8F7A138A34C694E8D5986006AE1DC8BB5040EB0380F4B40D6BBB|4~|6~%M373953006001001^MANUAL ENTRY/^15120000000000000000?|7~;373953006001001=15120000000000000?|8~|9~00000000|10~000001|11~9500030000081C2000C5|12~00000000|"
+		String card = "0~IPAD100KB|24~98AC18281702140C|1~33|2~2EE099E348918FB1BBFF1D5C0FEAEBA1FE02E62B303661AE804C5233A225A716D674C685DC92C0B9D3AD2BA2F1307063EFBB168239C98836|3~9E7952E11A1230CC702D7AA11BFB8F7A138A34C694E8D5986006AE1DC8BB5040EB0380F4B40D6BBB|4~|6~%M373953006001001^MANUAL ENTRY/^15120000000000000000?|7~;373953006001001=15120000000000000?|8~|9~00000000|10~000001|11~9500030000081C2000C5|12~00000000|"
 					
 				;
 		Pattern pregex = Pattern.compile("3~.*\\|4");
@@ -44,16 +64,26 @@ public class TestXML {
 		System.out.println(m.group());
 		Pattern pregex1 = Pattern.compile("11~.*\\|12");
 		Matcher m1 = pregex1.matcher(card);
-		m1.find();*/
+		m1.find();
+		
+		String [] data = {"CTranDetail", "3", "merchantID2"};
+		
+		Response res = new Response(9, data);
+		
+		System.out.println(res.getSoap());
+		System.out.println(res.getResponse());
+		System.out.println("____________________________________________");
+		
+		if(true)return;
 //		System.out.print(m1.group());
 		//String one[] = {"22", "22", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "1.09", "1.09", "123", "4 Corporate SQ", "30329"};
 	//	String one[] = {"23", "23", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "1.08", "1.08", "1234", "1661 E. Camelback", "85016"};
 //		String one[] = {"24", "24", "POS BRAVO v1.0", card.substring(m1.start()+3, m1.end()-3), card.substring(m.start()+2, m.end()-2), "1.10", "1.10", "123", "4 Corporate SQ", "30329"};
 		
-		String four[] = {"16", "16", "POS BRAVO v1.0", "9500030000081C20001A", "2B11F45ABEE6A6B288A76FED3BBCCE63130970C742BDD607D75F09821AAF2C6482F1AB593E0A97BA", "2.00", "2.00"};
+	/*	String four[] = {"16", "16", "POS BRAVO v1.0", "9500030000081C20001A", "2B11F45ABEE6A6B288A76FED3BBCCE63130970C742BDD607D75F09821AAF2C6482F1AB593E0A97BA", "2.00", "2.00"};
 		//non encrypted cc 
 		Response set = new Response();
-		set.setIDnPas("merchantID2");
+		set.setIDnPas("merchantID2");*/
 /*	
 		//Testing For Manual Entry
 
