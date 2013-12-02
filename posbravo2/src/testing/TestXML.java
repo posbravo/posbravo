@@ -1,6 +1,8 @@
 package testing;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -8,7 +10,7 @@ import java.util.regex.Pattern;
 
 import pointOfSale.*;
 
-public class TestXML {
+public class TestXML  {
 
 	public static void main(String[] args) {
 		/*String a = null;
@@ -34,6 +36,46 @@ public class TestXML {
 		//	System.out.println("IT WORKS");
 		//	return;
 		//}
+		
+		//ProcessPanel.closeReceipt("PROGRESS", new File("Files/Receipts/2013-10-25_09.49.37"));
+		PrintWriter f;
+		try {
+			f = new PrintWriter(new File("Files/Receipts/2013-10-25_09.49.39"));
+			f.println("aaaaa\naaaa");
+			f.println("Baaa\naaa");
+			f.close();
+			
+		} catch (FileNotFoundException e3) {
+			// TODO Auto-generated catch block
+			e3.printStackTrace();
+		}
+		if(true)return;
+		PrintStream s;
+		Exception e = new Exception();
+		try {
+			s = new PrintStream(new File("lala"));
+			e.printStackTrace(s);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String a = "1";
+		String c = null;
+		int b = 0;
+		
+		try{
+			//b = c.length();
+			c = a.substring(5, 10);
+			a = "3";
+		}
+		catch(Exception e2){
+			System.out.println("There is error");
+			e2.printStackTrace();
+		}
+		System.out.println("Ok System doesn't crash");
+		System.out.println(a);
+		if(true)return;
+		
 		String swipe1 = "0~IPAD100KB|24~98AC18281702140C|1~33|2~EC5A3972BE3A7DD16559861151BAE7C5F961B63D9ED7076DF0C835F873FA9E48ABD0535C751C322E8EA493ED015F7A0DF3312600C8C4AA9E|3~FD1E93B24B1F14EC989506E6CC04E1C360948EDEC23FFBAFE724DD4C04B847D3E243466E7738ABCC|4~|6~%M4005550000000480^MANUAL ENTRY/^1512000000000000000?|7~;4005550000000480=1512000000000000?|8~|9~00000000|10~000001|11~9500030000081C2000CB|12~00000000|";
 		String temp1[] = {""};
 		if(swipe1.contains("MANUAL ENTRY")){
@@ -384,5 +426,10 @@ if(true)return;
 		
 		return temp;
 	}
-	
+	public static String test() throws ArrayIndexOutOfBoundsException{
+		int a = 1;
+		int b = 2;
+		String array[] = new String[5];
+		return array[8];
+	}
 }
