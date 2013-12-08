@@ -1,4 +1,5 @@
 package testing;
+import java.awt.GridLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -8,14 +9,106 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+
 import pointOfSale.*;
 
-public class TestXML  {
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-	public static void main(String[] args) {
+public class TestXML extends JFrame {
+	JTextField display = new JTextField();
+	String swipe = "";
+	int deleter = 0;
+	public static void main(String [] args){
+		System.out.print("11111".substring(0, 3));
+		if(true)return;
+		TestXML a = new TestXML();
+		a.setSize(100, 100);
+		a.setVisible(true);
+	}
+
+	public TestXML(){
+		setLayout(new GridLayout(1,2));
+		KeyBarsListener listen = new KeyBarsListener();
+		
+		add(display);
+		display.addKeyListener(listen);
+		display.addMouseListener(new MouseAdapter(){
+			 public void mouseEntered( MouseEvent e ) {
+				 display.setCaretPosition(display.getText().length());
+			      // called when the pointer enters the applet's rectangular area
+			   }
+			   public void mouseExited( MouseEvent e ) {
+
+					 display.setCaretPosition(display.getText().length());
+			      // called when the pointer leaves the applet's rectangular area
+			   }
+			   public void mouseClicked( MouseEvent e ) {
+
+					 display.setCaretPosition(display.getText().length());
+			      // called after a press and release of a mouse button
+			      // with no motion in between
+			      // (If the user presses, drags, and then releases, there will be
+			      // no click event generated.)
+			   }
+			   public void mousePressed( MouseEvent e ) {  // called after a button is pressed down
+
+					 display.setCaretPosition(display.getText().length());
+			      // "Consume" the event so it won't be processed in the
+			      // default manner by the source which generated it.
+			      e.consume();
+			   }
+			   public void mouseReleased( MouseEvent e ) {  // called after a button is released
+
+					 display.setCaretPosition(display.getText().length());
+					deleter = 1;
+					 
+			   }
+			   public void mouseMoved( MouseEvent e ) {  // called during motion when no buttons are down
+
+					 display.setCaretPosition(display.getText().length());
+			      e.consume();
+			   }
+			   public void mouseDragged( MouseEvent e ) {  // called during motion with buttons down
+
+					 display.setCaretPosition(display.getText().length());
+			      e.consume();
+			   }
+		});
+	}
+	private class KeyBarsListener extends KeyAdapter {
+		
+		public void keyPressed(KeyEvent e){
+				if( e.getKeyCode() >= KeyEvent.VK_0 || e.getKeyCode() <= KeyEvent.VK_0){
+				
+				}
+				else{
+					e.consume();
+				}
+		}
+		public void keyTyped(KeyEvent e){
+			if( e.getKeyChar() >= KeyEvent.VK_0 && e.getKeyChar() <= KeyEvent.VK_9){
+				
+			}
+			else{
+				e.consume();
+			}
+			
+			swipe += String.valueOf(e.getKeyChar());
+			System.out.println(swipe);
+		}
+
+	/*public static void main(String[] args) {
 		/*String a = null;
 		if(a == null){
 			if(a.equals("a") || a == null){
+			
 				System.out.print("Works");
 			}
 		}
@@ -38,7 +131,11 @@ public class TestXML  {
 		//}
 		
 		//ProcessPanel.closeReceipt("PROGRESS", new File("Files/Receipts/2013-10-25_09.49.37"));
-		PrintWriter f;
+		//StringBuilder str = new StringBuilder(null);
+
+		
+		
+	/*	PrintWriter f;
 		try {
 			f = new PrintWriter(new File("Files/Receipts/2013-10-25_09.49.39"));
 			f.println("aaaaa\naaaa");
@@ -249,7 +346,7 @@ if(true)return;
 				System.out.println(test.getResponse());
 				System.out.println("____________________________________________");
 */
-	   if(true) return;
+	 //  if(true) return;
 
 //--------------------------------------------------------------------------------------------
 				
@@ -275,12 +372,12 @@ if(true)return;
 				System.out.println(test3.getResponse());
 				System.out.println("____________________________________________");
 				*/
-				if(true)return;
+		//		if(true)return;
 				
 		/*String 
 		if(true)return;*/
 		
-		String []one = new String[]{"000001", "000001", "POS BRAVO v1.0", "6050110010027251161", "100.00", "Issue"};
+/*		String []one = new String[]{"000001", "000001", "POS BRAVO v1.0", "6050110010027251161", "100.00", "Issue"};
 		
 		Response test1 = new Response(11, one);
 		System.out.println(test1.getXML());

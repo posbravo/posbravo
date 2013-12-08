@@ -11,15 +11,19 @@ public class CardProcess {
 		
 	}
 	
-	public static String getTrack(String swipe) {
+	public static String getTrack(String swipe) throws Exception{
 		Scanner regex = new Scanner(swipe);
 		String temp = regex.findInLine(";\\d+=\\d+\\?");
+		if(temp == null){
+			regex.close();
+			throw new Exception();
+		}
 		temp = temp.substring(1, temp.length()-1);
 		regex.close();
 		return temp;
 	}
 
-	public static String[] getEncryption(String swipe, boolean debit) {
+	public static String[] getEncryption(String swipe, boolean debit) throws Exception{
 		String [] temp = new String[5];
 		
 		if(swipe.contains("MANUAL ENTRY")){
