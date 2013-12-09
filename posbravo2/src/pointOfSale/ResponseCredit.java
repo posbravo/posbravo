@@ -32,6 +32,24 @@ public class ResponseCredit {
 		this.type = type__;
 		switch (type) {
 		
+		//PreAuth/Return For Manual
+		case 0:
+			tranCode = "PreAuth";
+			if(data[0].equals("Return")){
+				tranCode = data[0];
+			}
+			invoiceNo = data[1];
+			refNo = data[2];
+			memo = data[3];
+			recordNo = "RecordNumberRequested";
+			accountNum  = data[4];
+			expDate = data[5];
+			purchase = data[6];
+			authorize = data[7];
+			merchantID = data[8];
+			result = getResult0();
+			break;
+			
 		//PreAuth/Return For Non-Encrypted
 		case 1:
 			tranCode = "PreAuth";
@@ -174,7 +192,43 @@ public class ResponseCredit {
 		}
 		 
 		 //<?xml version="1.0"?> <TStream>  <Transaction>   <MerchantID>395347308=E2ETKN</MerchantID>   <TranType>Credit</TranType>   <TranCode>PreAuth</TranCode>   <InvoiceNo>16</InvoiceNo>   <RefNo>16</RefNo> //use RefNo=InvoiceNo on PreAuth requests   <Memo>MPS Example XML v1.0</Memo>         <PartialAuth>Allow</PartialAuth> //Required to "Allow" partial approvals   <Frequency>OneTime</Frequency> //use to request a Token for "one time" use(6 months)   <RecordNo>RecordNumberRequested</RecordNo>   <Account> //use for encrypted data elements in place of Track1 or Track2    <EncryptedFormat>MagneSafe</EncryptedFormat>   <AccountSource>Swiped</AccountSource>   <EncryptedBlock>F40DDBA1F645CC8DB85A6459D45AFF8002C244A0F74402B479 ABC9915EC9567C81BE99CE4483AF3D</EncryptedBlock> //for E2E (P2PE), always use Track2 block <EncryptedKey>9012090B01C4F200002B</EncryptedKey>  </Account>   <Amount>    <Purchase>2.00</Purchase> //Purchase=Authorize on request    <Authorize>2.00</Authorize>   </Amount>  </Transaction> </TStream> 
-		
+
+		 private String getResult0()
+		 {
+			 String temp = "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";
+			 temp += merchantID;
+			 temp += "</MerchantID>";
+			 temp += "\n\t\t<OperatorID>test</OperatorID>";
+			 temp += "\n\t\t<TranType>";
+			 temp += tranType;
+			 temp += "</TranType>\n\t\t<TranCode>";
+			 temp += tranCode;
+			 temp += "</TranCode>\n\t\t<InvoiceNo>";
+			 temp += invoiceNo;
+			 temp += "</InvoiceNo>\n\t\t<RefNo>";
+			 temp += refNo;
+			 temp += "</RefNo>\n\t\t<Memo>";
+			 temp += memo;
+			 temp += "</Memo>\n\t\t<Frequency>";
+			 temp += frequency;
+			 temp += "</Frequency>\n\t\t<RecordNo>";
+			 temp += recordNo;
+			 temp += "</RecordNo>\n\t\t<PartialAuth>";
+			 temp += partialAuth;
+			 temp += "</PartialAuth>\n\t\t<Account>\n\t\t\t<AcctNo>";
+			 temp += accountNum;
+			 temp += "</AcctNo>\n\t\t\t<ExpDate>";
+			 temp += expDate;
+			 temp += "</ExpDate>\n\t\t</Account>\n\t\t<Amount>\n\t\t\t<Purchase>";
+			 temp += purchase;
+			 temp += "</Purchase>\n\t\t\t<Authorize>";
+			 temp += authorize;
+			 temp += "</Authorize>\n\t\t</Amount>";
+			 temp+= "\n\t</Transaction>\n</TStream>";
+
+			 return temp;
+		 }
+
 		private String getResult1()
 		{
 			String temp = "<TStream>\n\t<Transaction>\n\t\t<MerchantID>";

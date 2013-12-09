@@ -211,11 +211,12 @@ public class ReceiptPanel extends JPanel
 	 * @param entry First character, which the "tab" will follow
 	 * @return A variable number of blank spaces to act as a tab
 	 */
-	private static String manualTab(String entry)
+	protected static String manualTab(String entry)
 	{
 		String tab = "";
-		for(int count=0; count < 15 - entry.length(); count++)
+		for(int count=0; count < 15 - entry.length(); count++){
 			tab += " ";
+		}
 		return tab;
 	}
 	/**

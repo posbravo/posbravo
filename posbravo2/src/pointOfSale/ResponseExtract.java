@@ -3,30 +3,57 @@ package pointOfSale;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.text.DecimalFormat;
 import java.util.Scanner;
 
 public class ResponseExtract {
 
-	public ResponseExtract(){
-
+	private static String fileName = "";
+	//private static String value = null;
+	
+	public ResponseExtract(String fileName){
+		this.fileName = fileName;
 	}
 	
+	/*public ResponseExtract(File file){
+		double value = 0;
+		try {
+			Scanner read = new Scanner(file);
+			while(read.hasNextLine()){
+				String temp = read.nextLine();
+				if(temp.contains("Approved")){
+					String temp2[] = temp.split(" ");
+					value = Double.parseDouble(temp2[0].substring(1));
+					DecimalFormat format = new DecimalFormat("0.00");
+					this.value = format.format(value);
+				}
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}*/
 	
 
-	public static String[] getData(String receiptName, String extractFrom) {
+	public static String[] getData(String fileName2, String receiptType) {
 		Scanner reader = null;
-		String[] toReturn = null;
-		if (extractFrom.equals("PreAuth")) {
+		String[] toReturn = new String[9];
+		if(!fileName2.equals("") && fileName2 != null){
+			fileName = fileName2;
+		}
+		
+		if (receiptType.equals("PreAuth")) {
 			try {
 				reader = new Scanner(new File("Files/Transaction/Response/1/"
-						+ receiptName + ".xml"));
+						+ fileName + ".xml"));
 			} catch (FileNotFoundException e1) {
 				e1.printStackTrace();
 			}
 		} else {
 			try {
 				reader = new Scanner(new File("Files/Transaction/Response/2/"
-						+ receiptName + ".xml"));
+						+ fileName + ".xml"));
 			} catch (FileNotFoundException e1) {
 				e1.printStackTrace();
 				// return null;
@@ -47,7 +74,7 @@ public class ResponseExtract {
 					} else if (read.contains("InvoiceNo")) {
 						toReturn[1] = regex
 								.findInLine("<InvoiceNo>[\\d]+</InvoiceNo>");
-						toReturn[1] = toReturn[0].substring(
+						toReturn[1] = toReturn[1].substring(
 								"<InvoiceNo>".length(), toReturn[1].length()
 								- "</InvoiceNo>".length());
 					} else if (read.contains("RefNo")) {
@@ -93,12 +120,22 @@ public class ResponseExtract {
 								- "</ProcessData>".length());
 					}
 				} catch (Exception e) {
-					
+					e.printStackTrace();
 				
 				}
 			}
 			reader.close();
-
+			
+			if(!toReturn[3].equals(toReturn[4])){
+				toReturn[3] = toReturn[4];
+			}
+			
+			if(toReturn[0].contains("395347306")){
+				toReturn[0] = "merchantID1";
+			}
+			else if(toReturn[0].contains("395347308")){
+				toReturn[0] = "merchantID2";
+			}
 		}
 
 		return toReturn;

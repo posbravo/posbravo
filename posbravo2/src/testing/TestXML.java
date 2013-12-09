@@ -22,6 +22,31 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class TestXML extends JFrame {
+	
+	public static void main(String [] args){
+		double value = 0;
+		try {
+			Scanner read = new Scanner(new File("Files/Receipts/2013-12-08_16.32.19"));
+			while(read.hasNextLine()){
+				String temp = read.nextLine();
+				if(temp.contains("Approved")){
+					String temp2[] = temp.split(" ");
+					value = Double.parseDouble(temp2[0].substring(1));
+
+				}
+			}
+			DecimalFormat format = new DecimalFormat("0.00");
+			if(0.02 > 0)
+			System.out.print(format.format(value));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	
+	/*
 	JTextField display = new JTextField();
 	String swipe = "";
 	int deleter = 0;
@@ -436,7 +461,7 @@ if(true)return;
 		System.out.println(test.getResponse());
 		*/
 
-	}
+	//}
 	public static String [] getCodes(String xml) {
 		
 		

@@ -40,6 +40,7 @@ public class Response{
 		switch(type)
 		{
 		//Credit
+		case 0: //PreAuth/Return Manual
 		case 1: //PreAuth/Return Plain
 		case 2: //PreAuth/Return Encrypted
 		case 3: //PreAuthCapture
@@ -808,13 +809,13 @@ public class Response{
 	}
 	private void setIDnPas(String id){
 		initProperties();
-		//for voidsale, reference appropriate ids based on merchantID on the sent receipt 
-		if(id.equals("395347306=TOKEN")){
+	/*	//for voidsale, reference appropriate ids based on merchantID on the sent receipt 
+		if(id.contains("395347306")){
 			id = "merchantID1";
 		}
-		else if(id.equals("395347308=E2ETKN")){
+		else if(id.contains("395347308")){
 			id = "merchantID2";
-		}
+		}*/
 		
 		this.merchantID = properties.getProperty(id);
 		System.out.println(merchantID);
@@ -829,6 +830,8 @@ public class Response{
 		
 		String temp = null;
 		for(int x = 0; x < data.length; x++){
+
+			System.out.println("*****data[x] = " + x);
 			if(data[x].contains("merchant")){
 				setIDnPas(data[x]);
 				data[x] = this.merchantID;

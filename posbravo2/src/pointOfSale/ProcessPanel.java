@@ -62,12 +62,7 @@ public class ProcessPanel extends JPanel implements ActionListener {
 						CardPanel.DisplayFocus(true);
 						ReceiptPanel.loadReceipt(receiptList.getSelectedValue());
 						CardPanel.loadReciept(new File(RECEIPT_PATH + "/" + receiptList.getSelectedValue()));
-						if(!CardPanel.tipVisible()){
-							CardPanel.setLimiter(false);
-						}
-						else{
-							CardPanel.setLimiter(true);
-						}
+					
 						
 					}}
 			}
@@ -159,12 +154,7 @@ public class ProcessPanel extends JPanel implements ActionListener {
 			CardPanel.DisplayFocus(true);
 			ReceiptPanel.loadReceipt(receiptList.getSelectedValue());
 			CardPanel.loadReciept(new File(RECEIPT_PATH + "/" + receiptList.getSelectedValue()));
-			if(!CardPanel.tipVisible()){
-				CardPanel.setLimiter(false);
-			}
-			else{
-				CardPanel.setLimiter(true);
-			}
+			
 			
 		}
 		if (event.getActionCommand().equals("Delete") && receiptList.getSelectedIndex() > -1)
@@ -246,12 +236,12 @@ public class ProcessPanel extends JPanel implements ActionListener {
 
 		
 	}
-	public static void closeReceipt(String title, String purchase, String authorize) {
+	public static void closeReceipt(String title, String approve) {
 		closeReceipt(title, new File(RECEIPT_PATH + "/"
-				+ receiptList.getSelectedValue()), purchase, authorize);
+				+ receiptList.getSelectedValue()), approve);
 		SystemInit.setProcessScreen(isAdmin);
 	}
-	public static void closeReceipt(String title, File file, String purchase, String authorize) {
+	public static void closeReceipt(String title, File file, String approve) {
 //		File file = new File(RECEIPT_PATH + "/"
 //				+ receiptList.getSelectedValue());
 		Scanner reader = null;
@@ -269,6 +259,9 @@ public class ProcessPanel extends JPanel implements ActionListener {
 				
 				
 			}
+			if(approve != null && !approve.equals("")){
+				toPrint += "\n" + Tools.toMoney(approve) + ReceiptPanel.manualTab(Tools.toMoney(approve)) + "Approved";
+			}
 			reader.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("Error reading");
@@ -276,7 +269,7 @@ public class ProcessPanel extends JPanel implements ActionListener {
 		}
 		try {
 			printer = new PrintWriter(file);
-			printer.println(toPrint.replace(purchase, authorize));
+			printer.println(toPrint);
 			printer.flush();
 			printer.close();
 		} catch (FileNotFoundException e) {
