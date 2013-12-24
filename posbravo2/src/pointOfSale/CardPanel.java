@@ -490,7 +490,9 @@ public class CardPanel extends JPanel implements ActionListener {
 						if(backspace){
 							try{
 								current = current.substring(0, current.length()-1);
-								counter--;
+								if(counter > 0){
+									counter--;
+								}
 							}
 							catch(Exception exc){
 								display.setText(tabText[selection]);
@@ -604,9 +606,10 @@ public class CardPanel extends JPanel implements ActionListener {
 						e.consume();
 						if(backspace){
 							try{
-								counter--;
 								current = current.substring(0, current.length()-1);
-								
+								if(counter > 0){
+									counter--;
+								}
 							}
 							catch(Exception exc){
 								display.setText(tabText[selection]);
@@ -1016,7 +1019,7 @@ public class CardPanel extends JPanel implements ActionListener {
 				System.out.println("**** " + tabStrings[selection]);
 				selection = 3;
 				current = tabStrings[selection];
-
+				counter = current.length();
 				break;
 			case 16:
 				Response response1 = new Response();
