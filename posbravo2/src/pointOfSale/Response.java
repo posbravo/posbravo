@@ -47,19 +47,19 @@ public class Response{
 		case 4: //VoidSale/Reversal/VoidReturn
 		case 5: //Sale
 		case 6: //Adjust
-			ResponseCredit resCre = new ResponseCredit(type, data);
+			ResponseCredit resCre = new ResponseCredit(type, data, tranType, frequency, partialAuth);
 			result = resCre.getXML();
 			break;
 			
 		//Debit	
 		case 7: //Sale/Return  
-			ResponseDebit resDeb = new ResponseDebit(type, data);
+			ResponseDebit resDeb = new ResponseDebit(type, data, tranType, frequency, partialAuth);
 			result = resDeb.getXML();
 			break;
 			
 		//Gift
 		case 8: //Balance/Issue/Sale/Nonfsale/Return/Reload/VoidSale/VoidReturn/VoidReload
-			ResponseGift resGift = new ResponseGift(type, data);
+			ResponseGift resGift = new ResponseGift(type, data, tranType, frequency, partialAuth);
 			result = resGift.getXML();
 			break;
 			
@@ -808,9 +808,9 @@ public class Response{
 		
 	}
 	private void setIDnPas(String id){
-		initProperties();
-	/*	//for voidsale, reference appropriate ids based on merchantID on the sent receipt 
-		if(id.contains("395347306")){
+		//initProperties();
+		//for voidsale, reference appropriate ids based on merchantID on the sent receipt 
+	/*	if(id.contains("395347306")){
 			id = "merchantID1";
 		}
 		else if(id.contains("395347308")){

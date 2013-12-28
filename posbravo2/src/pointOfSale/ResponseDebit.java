@@ -7,15 +7,16 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class ResponseDebit {
-	private static String merchantID /*"023358150511666""395347306=TOKEN"*/ , track2, soap, startDate, endDate, batchNo, itemCount, netBatch, creditCount, creditAmt, creditRetCount, creditRetAmt, debitPurCount, debitPurAmt, debitRetCount, debitRetAmt, entryType , cashback, encPin, dervk, cvv, addr, zip, tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
-	private String result = "", response = "";
-	private Properties properties;
-	private File file;
-	private FileInputStream fileReader;
-	private int timeout;
+	private String merchantID /*"023358150511666""395347306=TOKEN"*/ , track2, soap, startDate, endDate, batchNo, itemCount, netBatch, creditCount, creditAmt, creditRetCount, creditRetAmt, debitPurCount, debitPurAmt, debitRetCount, debitRetAmt, entryType , cashback, encPin, dervk, cvv, addr, zip, tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
+	private String result = "";
 	
-	public ResponseDebit(int type, String[] data) {
-		onLoad();
+	public ResponseDebit(int type, String[] data, String tranType, String frequency, String partialAuth) {
+		//onLoad();
+		
+		this.tranType = tranType;
+		this.frequency = frequency;
+		this.partialAuth = partialAuth;
+		
 		switch (type) {
 		case 7:
 			tranCode = data[0];
@@ -77,7 +78,7 @@ public class ResponseDebit {
 
 		return temp;
 	}
-
+/*
 	private void initProperties() {
 		properties = new Properties();
 		file = new File("Files/Properties/MercuryMerchantIDDev.properties");
@@ -113,7 +114,7 @@ public class ResponseDebit {
 		this.timeout = Integer.parseInt(properties.getProperty("timeout"));
 
 	}
-
+*/
 	public String getXML() {
 		return this.result;
 	}

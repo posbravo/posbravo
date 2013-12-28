@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class ResponseGift {
-	private static String merchantID /* "023358150511666""395347306=TOKEN" */,
+	private String merchantID /* "023358150511666""395347306=TOKEN" */,
 			track2, soap, startDate, endDate, batchNo, itemCount, netBatch,
 			creditCount, creditAmt, creditRetCount, creditRetAmt,
 			debitPurCount, debitPurAmt, debitRetCount, debitRetAmt, entryType,
@@ -16,14 +16,17 @@ public class ResponseGift {
 			recordNo, partialAuth /* "Allow" */, accountNum, expDate, purchase,
 			authorize, gratuity, authCode, acqRefData, processData,
 			encryptedBlock, encryptedKey;
-	private String result = "", response = "";
-	private Properties properties;
-	private File file;
-	private FileInputStream fileReader;
-	private int timeout;
+	
+	private String result = "";
 
-	public ResponseGift(int type, String[] data) {
-		onLoad();
+
+	public ResponseGift(int type, String[] data, String tranType, String frequency, String partialAuth) {
+		//onLoad();
+		
+		this.tranType = tranType;
+		this.frequency = frequency;
+		this.partialAuth = partialAuth;
+		
 		switch (type) {
 		case 8:
 			entryType = data[0];
@@ -81,7 +84,7 @@ public class ResponseGift {
 
 		return temp;
 	}
-
+/*
 	private void initProperties() {
 		properties = new Properties();
 		file = new File("Files/Properties/MercuryMerchantIDDev.properties");
@@ -117,7 +120,7 @@ public class ResponseGift {
 		this.timeout = Integer.parseInt(properties.getProperty("timeout"));
 
 	}
-
+*/
 	public String getXML() {
 		return this.result;
 	}

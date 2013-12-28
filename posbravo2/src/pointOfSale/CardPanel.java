@@ -326,6 +326,7 @@ public class CardPanel extends JPanel implements ActionListener {
 						processXML(res);
 						}
 						catch(Exception exc){
+							exc.printStackTrace();
 							String msg = exc.getMessage();
 							if(msg == null){
 								display.setText("Bad Data: Please Wait 3 Seconds or Press Card Number And Swipe Again");
@@ -689,6 +690,7 @@ public class CardPanel extends JPanel implements ActionListener {
 			tabStrings = new String[] { "", "", "", "", "", "", "" };
 			display.setText("");
 			loaded = false;
+			reset();
 			SystemInit.setTransactionScreen();
 		} else {
 			String[] response = getText(response1.getResponse()).split("/");
@@ -923,7 +925,6 @@ public class CardPanel extends JPanel implements ActionListener {
 			else{
 				selection = 2;
 			}
-			current = "";
 			reset();
 			reset = false;
 			timer.stop();
@@ -969,19 +970,30 @@ public class CardPanel extends JPanel implements ActionListener {
 		
 		if (command < 10) {
 			if (!dot) {
-				current += command;
+				if(selection != 3){
+					current += command;
+				}
+				else{
+					if(counter < 4){
+						current += command;
+						counter++;
+					}
+				}
 			} else if (dot && counter < 2) {
 				current += command;
 				counter++;
 			}
+			DisplayFocus(true);
 		} 
 		else {
 			switch (command) {
 			case 10:
 				DisplayFocus(true);
 				try{
-				current = current.substring(0, current.length() - 1);
-				counter--;
+					current = current.substring(0, current.length() - 1);
+					if(counter > 0){
+						counter--;
+					}
 				}
 				catch(Exception exc){
 					return;
@@ -989,10 +1001,11 @@ public class CardPanel extends JPanel implements ActionListener {
 				break;
 				
 			case 11:
-				if (!dot) {
+				if (!dot && tipButton.isVisible()) {
 					current += ".";
 					counter = 0;
 				}
+				DisplayFocus(true);
 				break;
 			// case 12: tabStrings[selection] = current;
 			// selection = 0;
@@ -1035,17 +1048,18 @@ public class CardPanel extends JPanel implements ActionListener {
 				// System.out.println("HERE!");
 				// System.out.println(temp2 + " first " + temp3);
 //--block if 1
-				if (checkReady(tabStrings[2], tabStrings[3])) {
+				if (checkReady(tabStrings[2], tabStrings[3])) { //checks for the format of the card # and exp date
 					System.out.println("*** " + firstLine);
 					System.out.println("value of the expiration date:"
 							+ tabStrings[3]);
 					System.out.println(validate(tabStrings[2], tabStrings[3]));
 //---block if 2
-					boolean luhnCheck = validate(tabStrings[2], tabStrings[3]);
+					boolean luhnCheck = validate(tabStrings[2], tabStrings[3]); //checks if the card # and exp date are valid
 					if (firstLine.equalsIgnoreCase("OPEN")
-							&& luhnCheck) {
+							&& luhnCheck) { //card has to be valid and the receipt needs to be "open"
 						System.out.println("Passed the test");
-						// get response
+						
+						//PreAuth
 						String[] zero = { "", getInvoiceNo() + "",
 								getInvoiceNo() + "", "POS BRAVO v1.0",
 								tabStrings[2], tabStrings[3], tabStrings[0],
@@ -1054,22 +1068,23 @@ public class CardPanel extends JPanel implements ActionListener {
 						saveTransaction(response1.getXML(),
 								response1.getResponse(), 1);
 //----block if 3
-						if (response1.getResponse().contains("Approved")) {
+						if (response1.getResponse().contains("Approved")) { //the response from mercury is approved
 							
-							//Check for Partiap Ap Response and handle it accordingly
-							Object [] partial = checkForPartialApproval();
-							if((boolean)partial[0]){
+							//Checks for Partiap Ap Response and handle it accordingly
+							Object [] partial = checkForPartialApproval(); 
+							if((boolean)partial[0]){ 
 								ProcessPanel.closeReceipt("PROGRESS", ((String)partial[2]).replace(".", ""));
 								Tools.update(display);
 								SystemInit.setProcessScreen(isAdmin);
 								return;
 							}
+							
 							ProcessPanel.closeReceipt("PROGRESS");
 							System.out.println("HERE");
 							tabStrings = new String[] { "", "", "", "", "", "", "" };
 							display.setText("");
 							loaded = false;
-							
+							reset();
 							SystemInit.setTransactionScreen();
 						}//----block if 3 end
 //----block else 3
@@ -1109,7 +1124,7 @@ public class CardPanel extends JPanel implements ActionListener {
 					}//---block if 2 end
 //---block else 2
 					else {
-						if (!luhnCheck) {
+						if (!luhnCheck) { //only if luhncheck returns false
 							System.out.println("Validate failed");
 							if (luhnErr) {
 								current = "Invalid Card Number";
@@ -1157,7 +1172,7 @@ public class CardPanel extends JPanel implements ActionListener {
 				
 //>>block if 1
 				if (firstLine.equalsIgnoreCase("PROGRESS")
-						&& tabStrings[1].matches("\\d{0,}\\.\\d{2}")) {
+						&& tabStrings[1].matches("\\d{0,}\\.\\d{2}")) { //checks if the tip matches the format and the receipt is in "progress"
 					System.out.println("Done************");
 
 					//String[] two = num2();
@@ -1176,6 +1191,9 @@ public class CardPanel extends JPanel implements ActionListener {
 						ProcessPanel.closeReceipt("SWIPED");
 						tabStrings = new String[] { "", "", "", "", "", "", "" };
 						loaded = false;
+						display.setText("");
+						
+						reset();
 						SystemInit.setTransactionScreen();
 					} else {
 						String res = getText(response.getResponse());
@@ -1212,7 +1230,7 @@ public class CardPanel extends JPanel implements ActionListener {
 				}//>>block if 1 end
 //>>block else 1 
 				else{
-			      if (tipButton.isVisible()) {
+			      if (tipButton.isVisible()) { //only if tipbutton is visible
                    		display.setText("Please check the gratuity format (x.xx)");
                    		reset = true;
 						retrn = false;
@@ -1225,9 +1243,13 @@ public class CardPanel extends JPanel implements ActionListener {
 
 				break;
 			case 17:
+				DisplayFocus(true);
 				if (firstLine.equalsIgnoreCase("VOID")
 						|| firstLine.equalsIgnoreCase("PROGRESS")) {
-					Response response3 = new Response(3, num3());
+					
+					String [] data = ResponseExtract.getData(receiptSave.getName(), "PreAuth");
+					String [] inputFour = {"", data[1], data[2], "POS BRAVO v1.0", data[5], data[4], data[7], data[8], data[6], data[0] };
+					Response response3 = new Response(4, inputFour);
 					saveTransaction(response3.getXML(),
 							response3.getResponse(), 3);
 					if (response3.getResponse().contains("Approved")) {
@@ -1235,6 +1257,7 @@ public class CardPanel extends JPanel implements ActionListener {
 						tabStrings = new String[] { "", "", "", "", "", "", "" };
 						display.setText("Voided");
 						loaded = false;
+						reset();
 						SystemInit.setTransactionScreen();
 						
 					} else {
@@ -1484,18 +1507,19 @@ public class CardPanel extends JPanel implements ActionListener {
 	}
 	
 	private Object[] checkForPartialApproval(){
-		String [] checker = num2();
+		String [] checker = ResponseExtract.getData(receiptSave.getName(), "PreAuth"); //num2();
 		Object [] retrn = new Object [3];
 		retrn[0] = false;
-		System.out.println(checker[3] + checker[8] + checker[9]);
-		if(checker[3] != null && checker[3] != null && checker[3] != null){
-			System.out.println((!checker[3].equals(checker[8])) + "" + checker[9].equalsIgnoreCase("Partial AP"));
-			if((!checker[3].equals(checker[8])) && checker[9].equalsIgnoreCase("Partial AP")){
-				retrn[1] = checker[8];
-				retrn[2] = checker[3];
+		//System.out.println(checker[3] + checker[8] + checker[9]);
+		//4-authorize, 3-purchase, 9-text-response
+		if(checker[3] != null && checker[4] != null && checker[9] != null){
+			System.out.println((!checker[4].equals(checker[3])) + "" + checker[9].equalsIgnoreCase("Partial AP"));
+			if((!checker[4].equals(checker[3])) && checker[9].toLowerCase().contains("partial")){ //equalsIgnoreCase("Partial AP")){
+				retrn[1] = checker[3]; 
+				retrn[2] = checker[4];
 				
-				int purchase = Integer.valueOf(checker[8].replace(".", ""));
-				int authorize = Integer.valueOf(checker[3].replace(".", ""));
+				int purchase = Integer.valueOf(checker[3].replace(".", ""));
+				int authorize = Integer.valueOf(checker[4].replace(".", ""));
 				int subt = purchase - authorize;
 				//DecimalFormat df = new DecimalFormat("0.00");
 				ReceiptPanel.clearReceipt();
@@ -1681,9 +1705,6 @@ public class CardPanel extends JPanel implements ActionListener {
 		cal.setTime(new Date());
 			if ((cal.get(Calendar.YEAR) % 100) <= Integer.parseInt(expDate
 					.substring(2))) {
-
-				// possible error because Calendar.Month does not return correct
-				// date
 				if ((cal.get(Calendar.MONTH) + 1) <= Integer.parseInt(expDate
 						.substring(0, 2))) {
 

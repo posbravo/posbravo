@@ -24,7 +24,7 @@ import java.awt.event.MouseEvent;
 public class TestXML extends JFrame {
 	
 	public static void main(String [] args){
-		double value = 0;
+		/*double value = 0;
 		try {
 			Scanner read = new Scanner(new File("Files/Receipts/2013-12-08_16.32.19"));
 			while(read.hasNextLine()){
@@ -42,7 +42,15 @@ public class TestXML extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+*/
+		System.out.println(new testNum().getNum2());
+		testNum a = new testNum();
+		a.incNum();
+		System.out.println(new testNum().getNum2());
+		System.out.println(a.getNum2());
 
+		System.out.println(new testNum().getNum());
+		System.out.println(a.getNum());
 	}
 
 	

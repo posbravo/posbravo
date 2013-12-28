@@ -1,10 +1,14 @@
 package pointOfSale;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.Scanner;
 
 /**
@@ -31,6 +35,9 @@ public class KeyPad extends JPanel implements ActionListener
 	private String numberCode = "";
 	private boolean validCode = false;
 	private boolean adminPrivilege = false;
+	
+	//private static int timeout;
+	//private static String tranType, frequency, partialAuth, merchantID, password;
 	
 	/**
 	 * Constructs a panel containing a grid of buttons used to enter a password
@@ -120,6 +127,8 @@ public class KeyPad extends JPanel implements ActionListener
 		
 		if(validCode)
 		{
+			//initProperties();
+			
 			TransactionGUI.setAdminPrivilege(adminPrivilege);
 			SystemInit.setTransactionScreen();
 		}
@@ -130,4 +139,48 @@ public class KeyPad extends JPanel implements ActionListener
 			numberField.setText("");
 		}
 	}
+	/*
+	private void initProperties() {
+		Properties properties = new Properties();
+		try {
+			File file = new File("Files/Properties/MercuryMerchantIDDev.properties");
+			FileInputStream fileReader  = new FileInputStream(file);
+			properties.load(fileReader);
+			fileReader.close();
+			fileReader = null;
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String id = properties.getProperty("idType");
+			if(id.equals("Encrypted")){
+				id = "merchantID2";
+			}
+			else if(id.equals("Plain")){
+				id = "merchantID1";
+			}
+			
+			this.merchantID = properties.getProperty(id);
+			
+			String temp = id.substring(id.length()-1);
+			temp = "password" + temp;
+			this.password = properties.getProperty(temp);
+			
+			this.tranType = properties.getProperty("tranType");
+			this.frequency = properties.getProperty("frequency");
+			this.partialAuth = properties.getProperty("partialAuth");
+			this.timeout = Integer.parseInt(properties.getProperty("timeout"));
+		
+		
+	/*
+		finally{
+			try{
+				fileReader.close();fileReader = null;
+			}
+			catch(IOException e){
+				e.printStackTrace();}
+		}*/
+
+	 //}	
+			//InputStream fileReader2 = getClass().getResourceAsStream("/Files/Properties/MercuryMerchantIDDev.properties");
 }

@@ -9,17 +9,8 @@ import java.util.Properties;
 import com.mercurypay.ws.sdk.MercuryWebRequest;
 
 public class ResponseCredit {
-
-	private Properties properties;
-	private File file;
 	
-
-	private FileInputStream fileReader;
-	
-	private final String webURL = "https://w1.mercurydev.net/ws/ws.asmx";
-	private int type, timeout;
-	private static String merchantID /*"023358150511666""395347306=TOKEN"*/ , track2, soap, startDate, endDate, batchNo, itemCount, netBatch, creditCount, creditAmt, creditRetCount, creditRetAmt, debitPurCount, debitPurAmt, debitRetCount, debitRetAmt, entryType , cashback, encPin, dervk, cvv, addr, zip, tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
-	private static String password /*= "123TOKEN"*/;
+	private String merchantID /*"023358150511666""395347306=TOKEN"*/ , track2, soap, startDate, endDate, batchNo, itemCount, netBatch, creditCount, creditAmt, creditRetCount, creditRetAmt, debitPurCount, debitPurAmt, debitRetCount, debitRetAmt, entryType , cashback, encPin, dervk, cvv, addr, zip, tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
 	private String result = "", response = "";
 	
 	 public ResponseCredit()
@@ -27,10 +18,13 @@ public class ResponseCredit {
 	    
 	    }
 		
-	public ResponseCredit(int type__, String[] data) {
-		onLoad();
-		this.type = type__;
-		switch (type) {
+	public ResponseCredit(int type__, String[] data, String tranType, String frequency, String partialAuth) {
+	//	onLoad();
+		this.tranType = tranType;
+		this.frequency = frequency;
+		this.partialAuth = partialAuth;
+		
+		switch (type__) {
 		
 		//PreAuth/Return For Manual
 		case 0:
@@ -161,7 +155,7 @@ public class ResponseCredit {
 
 	}
 		
-		 private void initProperties() {
+	/*	 private void initProperties() {
 				properties = new Properties();
 				file = new File("Files/Properties/MercuryMerchantIDDev.properties");
 				try {
@@ -181,15 +175,15 @@ public class ResponseCredit {
 				}
 				catch(IOException e){
 					e.printStackTrace();}}
-		 }
-		 private void onLoad() {
+		 }*/
+		/* private void onLoad() {
 		    initProperties();
 			this.tranType = properties.getProperty("tranType");
 			this.frequency = properties.getProperty("frequency");
 			this.partialAuth = properties.getProperty("partialAuth");
 			this.timeout = Integer.parseInt(properties.getProperty("timeout"));
 		
-		}
+		}*/
 		 
 		 //<?xml version="1.0"?> <TStream>  <Transaction>   <MerchantID>395347308=E2ETKN</MerchantID>   <TranType>Credit</TranType>   <TranCode>PreAuth</TranCode>   <InvoiceNo>16</InvoiceNo>   <RefNo>16</RefNo> //use RefNo=InvoiceNo on PreAuth requests   <Memo>MPS Example XML v1.0</Memo>         <PartialAuth>Allow</PartialAuth> //Required to "Allow" partial approvals   <Frequency>OneTime</Frequency> //use to request a Token for "one time" use(6 months)   <RecordNo>RecordNumberRequested</RecordNo>   <Account> //use for encrypted data elements in place of Track1 or Track2    <EncryptedFormat>MagneSafe</EncryptedFormat>   <AccountSource>Swiped</AccountSource>   <EncryptedBlock>F40DDBA1F645CC8DB85A6459D45AFF8002C244A0F74402B479 ABC9915EC9567C81BE99CE4483AF3D</EncryptedBlock> //for E2E (P2PE), always use Track2 block <EncryptedKey>9012090B01C4F200002B</EncryptedKey>  </Account>   <Amount>    <Purchase>2.00</Purchase> //Purchase=Authorize on request    <Authorize>2.00</Authorize>   </Amount>  </Transaction> </TStream> 
 
