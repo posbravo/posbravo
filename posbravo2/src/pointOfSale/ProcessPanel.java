@@ -50,6 +50,7 @@ public class ProcessPanel extends JPanel implements ActionListener {
 
 		readReceipts();
 		receiptList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		receiptList.setSelectionBackground(new Color(132, 250, 53));
 		receiptList.addMouseListener(new MouseListener(){
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -279,6 +280,16 @@ public class ProcessPanel extends JPanel implements ActionListener {
 		
 	}
 
+	public static void toggleSelection(){
+		if(receiptList.getSelectionBackground().equals(new Color(132, 250, 53))){
+			receiptList.setSelectionBackground(new Color(252, 28, 35));
+		}
+		else{
+			receiptList.setSelectionBackground(new Color(132, 250, 53));
+		}
+	}
+
+	
 }
 
 

@@ -150,7 +150,7 @@ public class ReceiptPanel extends JPanel
 		PrintWriter listWriter = null;
 		PrintWriter contentWriter = null;
 		newReceipt = getTimeStamp();
-		if(name != null || (!name.equals(""))){
+		if(name != null && (!name.equals(""))){
 			newReceipt = name;
 		}
 		try

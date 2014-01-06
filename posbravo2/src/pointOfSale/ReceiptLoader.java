@@ -130,6 +130,7 @@ public class ReceiptLoader extends JPanel implements ActionListener
 		try {
 			checker = new Scanner(toCheck);
 			String line = checker.nextLine();
+			checker.close();
 			if(line == null)
 			{
 				throw new FileNotFoundException();
@@ -138,7 +139,6 @@ public class ReceiptLoader extends JPanel implements ActionListener
 			{
 				return true;
 			}
-			checker.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

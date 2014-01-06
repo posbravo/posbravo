@@ -1,7 +1,9 @@
 package testing;
 import java.awt.GridLayout;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
@@ -24,6 +26,52 @@ import java.awt.event.MouseEvent;
 public class TestXML extends JFrame {
 	
 	public static void main(String [] args){
+	
+		File f = new File("C:\\Users\\first is the pc name\\Documents\\test.txt");
+		
+		System.out.print(f.canRead());
+		FileInputStream fs;
+		try {
+			fs = new FileInputStream(f);
+			int a = 1;
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try{
+			FileOutputStream fd = new FileOutputStream(f);
+			while(true){
+			fd.write(300000);
+			}
+			
+		}
+		catch(Exception e){
+			
+		}
+		
+	}
+
+		/*
+		Scanner inp = new Scanner(System.in);
+		
+		double x = inp.nextDouble();
+		double y = inp.nextDouble();
+		
+		System.out.println(((double)((int) (x * 100) + (int) (y * 100)))/100);
+		
+		for(int z = 0; z < 200; z++){
+		//	String temp = String.valueOf(z);
+		//	System.out.print(temp.substring(0, temp.length()-2) + "." + temp.substring(temp.length()-2));
+		//	System.out.println((double)z/100);
+		//	double q = (double)z/100;
+		//	System.out.println("*" + q*100);
+			System.out.println((double)(z + z)/100);
+		}
+		
+		
+	}
 		/*double value = 0;
 		try {
 			Scanner read = new Scanner(new File("Files/Receipts/2013-12-08_16.32.19"));
@@ -42,7 +90,7 @@ public class TestXML extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-*/
+*//*
 		System.out.println(new testNum().getNum2());
 		testNum a = new testNum();
 		a.incNum();

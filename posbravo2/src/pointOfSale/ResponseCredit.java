@@ -1,17 +1,10 @@
 package pointOfSale;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Properties;
-
-import com.mercurypay.ws.sdk.MercuryWebRequest;
 
 public class ResponseCredit {
 	
-	private String merchantID /*"023358150511666""395347306=TOKEN"*/ , track2, soap, startDate, endDate, batchNo, itemCount, netBatch, creditCount, creditAmt, creditRetCount, creditRetAmt, debitPurCount, debitPurAmt, debitRetCount, debitRetAmt, entryType , cashback, encPin, dervk, cvv, addr, zip, tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
-	private String result = "", response = "";
+	private String merchantID /*"023358150511666""395347306=TOKEN"*/ , track2,   entryType , cashback, encPin, dervk, cvv, addr, zip, tranType /*= "Credit"*/, tranCode, invoiceNo, refNo, memo, frequency /*= "OneTime"*/, recordNo, partialAuth /*"Allow"*/, accountNum, expDate, purchase, authorize, gratuity, authCode, acqRefData, processData, encryptedBlock, encryptedKey;
+	private String result = "";
 	
 	 public ResponseCredit()
 	    {

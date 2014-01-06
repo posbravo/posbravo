@@ -38,7 +38,7 @@ public class ResponseExtract {
 //fileName2 is the relative name of the file without the extension, receiptType is the type of the transaction to extract data from 
 	public static String[] getData(String fileName2, String receiptType) {
 		Scanner reader = null;
-		String[] toReturn = new String[9];
+		String[] toReturn = new String[10];
 		if(!fileName2.equals("") && fileName2 != null){
 			fileName = fileName2;
 		}
@@ -137,9 +137,10 @@ public class ResponseExtract {
 			if(toReturn[0].contains("395347306")){
 				toReturn[0] = "merchantID1";
 			}
-			else if(toReturn[0].contains("395347308")){
+			else if(toReturn[0].contains("395347308") || toReturn[0].contains("118725340908147")){
 				toReturn[0] = "merchantID2";
 			}
+			System.out.println(toReturn[0]);
 		}
 
 		return toReturn;

@@ -831,7 +831,7 @@ public class Response{
 		String temp = null;
 		for(int x = 0; x < data.length; x++){
 
-			System.out.println("*****data[x] = " + x);
+			System.out.println("*****data[x] = " + data[x]);
 			if(data[x].contains("merchant")){
 				setIDnPas(data[x]);
 				data[x] = this.merchantID;
